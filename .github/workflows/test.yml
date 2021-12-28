@@ -1,0 +1,15 @@
+name: Test
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Node.js v16
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - run: npm install
+      - run: npm run full
