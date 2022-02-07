@@ -1,5 +1,5 @@
 import Urlify from 'urlify';
-import { cinode } from '../config';
+import { cinode } from '..';
 
 // Warning: This was reverse engineered how they build the url
 // so there might be cases where this produces invalid url

@@ -12,5 +12,5 @@ jobs:
         uses: actions/checkout@v2
 
       - run: npm install
-      - run: echo -e "CINODE_COMPANY_ID=1234\nCINODE_COMPANY_NAME=foobarbaz\nCINODE_APP_ID=foo\nCINODE_APP_SECRET=bar" > .env
+      - run: echo -e "CINODE_COMPANY_ID=1234\nCINODE_COMPANY_NAME=foobarbaz\nCINODE_ACCESS_ID=foo\nCINODE_ACCESS_SECRET=bar" > .env
       - run: npm run full

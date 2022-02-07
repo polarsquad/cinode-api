@@ -1,6 +1,6 @@
 import memoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
-import { cinode } from '../config';
+import { cinode } from '..';
 import { client } from './client';
 
 class Api {
