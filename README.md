@@ -7,8 +7,7 @@ To make this work, you'll need to set the following environment variables:
 - `CINODE_ACCESS_ID`
 - `CINODE_ACCESS_SECRET`
 
-The company name is the `yourcompany` part in the Cinode URL.
-To obtain the other variables, Create a personal API account under https://app.cinode.com/yourcompany/account and copy the company ID, Access ID and Access secret.
+The company name is the `yourcompany` part in the Cinode URL. To obtain the other variables, create a personal API account under https://app.cinode.com/yourcompany/account and copy the company ID, Access ID and Access secret.
 
 # Links
 
