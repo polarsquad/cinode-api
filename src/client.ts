@@ -17,7 +17,8 @@ const limiter = new Bottleneck({
 
 function isValidJwtToken(token) {
   try {
-    return moment.unix((jwt_decode(token) as any).exp).isAfter(); // TODO: to fix
+    // not a fan of casting to `any`, but it works, seems like an issue with the third-party library
+    return moment.unix((jwt_decode(token) as any).exp).isAfter();
   } catch (e) {
     return false;
   }
