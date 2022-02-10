@@ -8,7 +8,6 @@ import {
   projectStageToHumanReadable,
 } from './model';
 import { CinodeService } from './service';
-import './types';
 import {
   buildProjectUrl,
   isProjectUrl,

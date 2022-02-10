@@ -1,6 +1,6 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 
-import { StatsBase } from './types';
+import type { StatsBase } from './types';
 
 export class StatsStorage {
   doc: GoogleSpreadsheet;

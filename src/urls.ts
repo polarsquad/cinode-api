@@ -11,7 +11,7 @@ const urlify = Urlify.create({
   trim: true,
 });
 
-import { User, Project, Assignment, CustomerBase, Image } from './types';
+import type { User, Project, Assignment, CustomerBase, Image } from './types';
 
 export const buildProjectUrl = (project: Project): string =>
   `https://app.cinode.com/${cinodeConfig.companyName}/projects/${

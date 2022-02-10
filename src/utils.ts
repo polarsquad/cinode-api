@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import {
+import type {
   Skill,
   User,
   Project,

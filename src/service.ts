@@ -1,6 +1,6 @@
 import memoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
-import {
+import type {
   Absence,
   Assignment,
   CustomerBase,
