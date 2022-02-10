@@ -1,6 +1,6 @@
 import memoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
-import { cinode } from '..';
+import { cinodeConfig } from './config';
 import { client } from './client';
 
 class Api {
@@ -299,4 +299,4 @@ class Api {
       .json();
 }
 
-export default new Api(cinode.companyId, client);
+export default new Api(cinodeConfig.companyId, client);

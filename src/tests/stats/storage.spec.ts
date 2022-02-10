@@ -1,11 +1,11 @@
 import 'mocha';
-import { StatsStorage } from '../../src/stats/storage';
+import { StatsStorage } from '../../stats/storage';
 import {
   CustomerStats,
   ProjectStats,
   SkillStats,
   UserStats,
-} from '../../src/stats/types';
+} from '../../stats/types';
 
 // Skipped because requires real google sheet to operate, but
 // can be used to test the StatsStorage

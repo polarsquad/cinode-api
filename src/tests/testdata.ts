@@ -100,7 +100,3 @@ export const versionControlSkill = {
   url: null,
   links: null,
 };
-
-module.exports = {
-  versionControlSkill,
-};

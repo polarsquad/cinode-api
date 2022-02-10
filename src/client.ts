@@ -1,5 +1,5 @@
 import got from 'got';
-import { cinode } from '..';
+import { cinodeConfig } from './config';
 import jwt_decode from 'jwt-decode';
 import moment from 'moment';
 import Bottleneck from 'bottleneck';
@@ -39,8 +39,8 @@ export const client = got.extend({
             const { access_token, refresh_token } = await got
               .get('token', {
                 prefixUrl: options.prefixUrl,
-                username: cinode.accessId,
-                password: cinode.accessSecret,
+                username: cinodeConfig.accessId,
+                password: cinodeConfig.accessSecret,
                 hooks: {
                   // beforeRequest: [console.log],
                   beforeRedirect: [console.log],

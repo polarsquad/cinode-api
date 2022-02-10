@@ -1,5 +1,5 @@
-import { Skill, User, Project, Assignment } from '../src/types';
-import { states, stages } from '../src/model';
+import { Skill, User, Project, Assignment } from '../types';
+import { states, stages } from '../model';
 
 export const skill = (props?): Skill => ({
   keywordId: 1,

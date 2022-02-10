@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { ProjectStats } from '../../src/stats/types';
+import { ProjectStats } from '../../stats/types';
 
 describe('stats types', () => {
   context('ProjectStats', () => {

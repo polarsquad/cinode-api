@@ -1,5 +1,5 @@
 import Urlify from 'urlify';
-import { cinode } from '..';
+import { cinodeConfig } from './config';
 
 // Warning: This was reverse engineered how they build the url
 // so there might be cases where this produces invalid url
@@ -14,9 +14,9 @@ const urlify = Urlify.create({
 import { User, Project, Assignment, CustomerBase, Image } from './types';
 
 export const buildProjectUrl = (project: Project): string =>
-  `https://app.cinode.com/${cinode.companyName}/projects/${project.id}/${urlify(
-    project.title
-  )}`;
+  `https://app.cinode.com/${cinodeConfig.companyName}/projects/${
+    project.id
+  }/${urlify(project.title)}`;
 
 const PROJECT_URL_REGEX =
   /https:\/\/app.cinode.com\/[\w-]+\/projects\/([0-9]+)\/.*/i;
@@ -34,9 +34,9 @@ export const parseProjectUrl = (url: string): number => {
 };
 
 export const buildCustomerUrl = (customer: CustomerBase) =>
-  `https://app.cinode.com/${cinode.companyName}/customers/${customer.id}/${
+  `https://app.cinode.com/${cinodeConfig.companyName}/customers/${
     customer.id
-  }-${urlify(customer.name)}`;
+  }/${customer.id}-${urlify(customer.name)}`;
 
 export const buildProjectRoleUrl = (project: Project, assignment: Assignment) =>
   `${buildProjectUrl(project)}/roles/${assignment.id}/${urlify(
@@ -53,13 +53,13 @@ export const buildProjectUrlFromAssignment = (assignment: Assignment) =>
   buildProjectUrl(assignment.project);
 
 export const buildUserUrl = (user: User) =>
-  `https://app.cinode.com/${cinode.companyName}/organisation/employees/${user.companyUserId}/${user.seoId}`;
+  `https://app.cinode.com/${cinodeConfig.companyName}/organisation/employees/${user.companyUserId}/${user.seoId}`;
 
 export const getUserDesiredAssignmentUrl = (user: User) =>
-  `https://app.cinode.com/${cinode.companyName}/organisation/employees/${user.companyUserId}/${user.seoId}/profile`;
+  `https://app.cinode.com/${cinodeConfig.companyName}/organisation/employees/${user.companyUserId}/${user.seoId}/profile`;
 
 export const getPersonalProfileUrl = (): string =>
-  `https://app.cinode.com/${cinode.companyName}/profile`;
+  `https://app.cinode.com/${cinodeConfig.companyName}/profile`;
 
 export const getImageUrl = (image: Image): string =>
   `https://p.cinodestatic.net/profile_images/${image.imageFileName.slice(

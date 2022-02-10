@@ -9,7 +9,7 @@ const requiredEnv = (key) => {
   return value;
 };
 
-export const cinode = {
+export const cinodeConfig = {
   companyId: requiredEnv('CINODE_COMPANY_ID'),
   companyName: requiredEnv('CINODE_COMPANY_NAME'),
   accessId: requiredEnv('CINODE_ACCESS_ID'),

@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import 'mocha';
-import { cinode } from '..';
+import { cinodeConfig } from '..';
 
 import {
   buildProjectUrlFromAssignment,
   getImageUrl,
   isProjectUrl,
   parseProjectUrl,
-} from '../src/urls';
+} from '../urls';
 
 import { project, assignment } from './test-builder';
 
@@ -21,7 +21,7 @@ describe('cinode utils', () => {
           })
         )
       ).to.equal(
-        `https://app.cinode.com/${cinode.companyName}/projects/123/foo-bar`
+        `https://app.cinode.com/${cinodeConfig.companyName}/projects/123/foo-bar`
       );
     });
 
@@ -33,7 +33,7 @@ describe('cinode utils', () => {
           })
         )
       ).to.equal(
-        `https://app.cinode.com/${cinode.companyName}/projects/123/foo-bar`
+        `https://app.cinode.com/${cinodeConfig.companyName}/projects/123/foo-bar`
       );
     });
 
@@ -45,7 +45,7 @@ describe('cinode utils', () => {
           })
         )
       ).to.equal(
-        `https://app.cinode.com/${cinode.companyName}/projects/123/foo-bar`
+        `https://app.cinode.com/${cinodeConfig.companyName}/projects/123/foo-bar`
       );
     });
   });
@@ -54,7 +54,7 @@ describe('cinode utils', () => {
     it('should identify project url', () => {
       expect(
         isProjectUrl(
-          `https://app.cinode.com/${cinode.companyName}/projects/89399/aws-expert`
+          `https://app.cinode.com/${cinodeConfig.companyName}/projects/89399/aws-expert`
         )
       ).to.eql(true);
     });
@@ -62,7 +62,7 @@ describe('cinode utils', () => {
     it('should not mess up with customer url', () => {
       expect(
         isProjectUrl(
-          `https://app.cinode.com/${cinode.companyName}/customers/58712/58712-unknown`
+          `https://app.cinode.com/${cinodeConfig.companyName}/customers/58712/58712-unknown`
         )
       ).to.eql(false);
     });
@@ -72,12 +72,12 @@ describe('cinode utils', () => {
     it('should parse project id', () => {
       expect(
         parseProjectUrl(
-          `https://app.cinode.com/${cinode.companyName}/projects/88523/Containers-and-Docker-basics-workshops`
+          `https://app.cinode.com/${cinodeConfig.companyName}/projects/88523/Containers-and-Docker-basics-workshops`
         )
       ).to.eql(88523);
       expect(
         parseProjectUrl(
-          `https://app.cinode.com/${cinode.companyName}/projects/89399/aws-expert`
+          `https://app.cinode.com/${cinodeConfig.companyName}/projects/89399/aws-expert`
         )
       ).to.eql(89399);
     });
