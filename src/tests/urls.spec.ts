@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { cinodeConfig } from '..';
+import { cinodeConfig } from '../config';
 
 import {
   buildProjectUrlFromAssignment,

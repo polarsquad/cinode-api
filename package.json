@@ -1,6 +1,6 @@
 {
   "name": "cinode-api",
-  "version": "0.1.13",
+  "version": "0.1.19",
   "description": "Cinode API for the Cinode platform",
   "homepage": "https://github.com/polarsquad/cinode-api#readme",
   "bugs": {
@@ -15,17 +15,31 @@
   "main": "./dist/index",
   "types": "./dist/index",
   "exports": {
-    ".": {
-      "types": "./dist/index",
-      "default": "./dist/index"
-    },
-    "./types": "./dist/types.js"
+    "./types": "./dist/types",
+    "./api": "./dist/api",
+    "./client": "./dist/client",
+    "./config": "./dist/config",
+    "./model": "./dist/model",
+    "./service": "./dist/service",
+    "./urls": "./dist/urls",
+    "./utils": "./dist/utils",
+    "./stats/builder": "./dist/stats/builder",
+    "./stats/storage": "./dist/stats/storage",
+    "./stats/types": "./dist/stats/types"
   },
   "typesVersions": {
     "*": {
-      "types": [
-        "dist/types.d.ts"
-      ]
+      "types": ["dist/types.d.ts"],
+      "api": ["dist/api.d.ts"],
+      "client": ["./dist/client.d.ts"],
+      "config": ["./dist/config.d.ts"],
+      "model": ["./dist/model.d.ts"],
+      "service": ["./dist/service.d.ts"],
+      "urls": ["./dist/urls.d.ts"],
+      "utils": ["./dist/utils.d.ts"],
+      "stats/builder": ["./dist/stats/builder.d.ts"],
+      "stats/storage": ["./dist/stats/storage.d.ts"],
+      "stats/types": ["./dist/stats/types.d.ts"]
     }
   },
   "files": [
