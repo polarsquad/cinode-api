@@ -9,7 +9,8 @@
   "author": "Tuomas Starck (tuomas.starck@polarsquad.com)",
   "contributors": [
     "Erno Aapa (erno@polarsquad.com)",
-    "Tamas Kadar (tamas.kadar@polarsquad.com)"
+    "Tamas Kadar (tamas.kadar@polarsquad.com)",
+    "Mikko Piuhola (mikko.piuhola@polarsquad.com)"
   ],
   "type": "module",
   "main": "./dist/index",
@@ -29,17 +30,39 @@
   },
   "typesVersions": {
     "*": {
-      "types": ["dist/types.d.ts"],
-      "api": ["dist/api.d.ts"],
-      "client": ["./dist/client.d.ts"],
-      "config": ["./dist/config.d.ts"],
-      "model": ["./dist/model.d.ts"],
-      "service": ["./dist/service.d.ts"],
-      "urls": ["./dist/urls.d.ts"],
-      "utils": ["./dist/utils.d.ts"],
-      "stats/builder": ["./dist/stats/builder.d.ts"],
-      "stats/storage": ["./dist/stats/storage.d.ts"],
-      "stats/types": ["./dist/stats/types.d.ts"]
+      "types": [
+        "dist/types.d.ts"
+      ],
+      "api": [
+        "dist/api.d.ts"
+      ],
+      "client": [
+        "./dist/client.d.ts"
+      ],
+      "config": [
+        "./dist/config.d.ts"
+      ],
+      "model": [
+        "./dist/model.d.ts"
+      ],
+      "service": [
+        "./dist/service.d.ts"
+      ],
+      "urls": [
+        "./dist/urls.d.ts"
+      ],
+      "utils": [
+        "./dist/utils.d.ts"
+      ],
+      "stats/builder": [
+        "./dist/stats/builder.d.ts"
+      ],
+      "stats/storage": [
+        "./dist/stats/storage.d.ts"
+      ],
+      "stats/types": [
+        "./dist/stats/types.d.ts"
+      ]
     }
   },
   "files": [
@@ -58,7 +81,7 @@
     "prepublish": "rimraf dist && tsc --project tsconfig.build.json"
   },
   "keywords": [],
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bottleneck": "^2.19.5",
     "dotenv": "^16.0.0",
@@ -87,5 +110,9 @@
     "prettier": "^2.5.1",
     "ts-node": "^10.5.0",
     "typescript": "^4.5.5"
+  },
+  "engines": {
+    "node": ">=16",
+    "npm": ">=8"
   }
 }
