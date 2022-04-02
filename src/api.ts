@@ -1,9 +1,14 @@
 import memoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
 import { cinodeConfig } from './config';
-import { client } from './client';
+import clientBuilder from './client';
 
-class Api {
+/**
+ * @deprecated
+ * In the past this was Cinode API wrapper.
+ * We should not use this directly anymore because it's untyped, but rather use the Service.
+ */
+export class Api {
   private readonly client;
   private companyId;
 
@@ -299,4 +304,10 @@ class Api {
       .json();
 }
 
-export default new Api(cinodeConfig.companyId, client);
+/**
+ * @deprecated Start using the constructor
+ */
+export default new Api(
+  cinodeConfig.companyId,
+  clientBuilder(cinodeConfig.accessId, cinodeConfig.accessSecret)
+);
