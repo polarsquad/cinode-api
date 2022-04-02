@@ -1,14 +1,22 @@
-# cinode-api
+# @polarsquad/cinode-api
 
-🚧 **WORK IN PROGRESS** 🚧
+**Unofficial** Node.js API client for [Cinode](https://cinode.com).
 
-Node.js API client for Cinode.
+> **NOTE:** 🚧 This client is still very much in development and shouldn't be considered stable before version 1.0.0 🚧
+
+This client has support for:
+
+- Interacting with skills
+- Interacting with project assignments
+- _More to follow..._
 
 ## Installation
 
 `npm install --save @polarsquad/cinode-api`
 
-## Instructions
+## Configuration
+
+**NOTE:** This library is moving away from environment variable based configuration but it is still a work in progress.
 
 To make this work, you'll need to set the following environment variables:
 
@@ -17,11 +25,24 @@ To make this work, you'll need to set the following environment variables:
 - `CINODE_ACCESS_ID`
 - `CINODE_ACCESS_SECRET`
 
-The company name is the `yourcompany` part in the Cinode URL. To obtain the other variables, create a personal API account under <https://app.cinode.com/yourcompany/account> and copy the company ID, Access ID and Access secret.
+The company name is the `yourcompany` part in the Cinode URL. To obtain the other variables, create a personal API
+account under <https://app.cinode.com/yourcompany/account> and copy the company ID, Access ID and Access secret.
 
 ## Development
 
-TODO
+Create a placeholder `.env` file for development:
+
+```sh
+echo -e "CINODE_COMPANY_ID=1234\nCINODE_COMPANY_NAME=foobarbaz\nCINODE_ACCESS_ID=foo\nCINODE_ACCESS_SECRET=bar" > .env
+```
+
+### Useful commands
+
+🚀 Run tests: `npm run test`
+
+🔧 Lint code: `npm run lint-fix`
+
+🖌️ Autoformat code: `npm run prettier-fix`
 
 ### Releasing
 
