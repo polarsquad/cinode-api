@@ -58,6 +58,10 @@ echo -e "CINODE_COMPANY_ID=1234\nCINODE_COMPANY_NAME=foobarbaz\nCINODE_ACCESS_ID
 
 - [Official Cinode API documentation](https://api.cinode.com/docs/index.html)
 
+## License
+
+See [LICENSE](./LICENSE) for more details.
+
 ## TODO
 
 - Use static (JWT) tokens for the API instead of personal ones
