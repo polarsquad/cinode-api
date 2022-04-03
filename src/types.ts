@@ -4,6 +4,11 @@
 // Feel free to add the fields you need.
 // https://api.cinode.com/docs/index.html
 
+export type Company = {
+  id: number;
+  name: string;
+};
+
 export type CustomerBase = {
   id: number;
   name: string;
@@ -16,8 +21,22 @@ export type Customer = {
 } & CustomerBase;
 
 export type Project = {
+  companyId: number;
+  customerId: number;
   id: number;
-  title: string;
+  title: string | null;
+  description: string | null;
+
+  identifier: string | null;
+  customerIdentifier: string | null;
+
+  intermediator: CustomerBase;
+
+  estimatedCloseDate: string | null;
+  estimatedValue: number | null;
+  probability: number | null;
+  pipelineId: number | null;
+  currency: Currency;
 
   currentState: number;
   currentStageId: number;
@@ -26,6 +45,8 @@ export type Project = {
 
   assignments: Assignment[];
   salesManagers: User[];
+
+  teamId: number | null;
 
   tags: Tag[];
 };
@@ -68,6 +89,16 @@ export type Profile = {
   employers: {}[];
 };
 
+export enum ContractType {
+  Hourly = 0,
+  Fixed = 1,
+}
+
+export enum ExtentType {
+  Percent = 0,
+  Hours = 1,
+}
+
 // Get fetched with separate API call
 export type HasAssignments = {
   assignments: {
@@ -78,9 +109,18 @@ export type HasAssignments = {
 
 export type Assignment = {
   id: number;
-  title: string;
+  title: string | null;
+  description: string | null;
   project: Project;
   customer: CustomerBase;
+
+  rate: number | null;
+  extent: number | null;
+  extentType: ExtentType;
+  oralAgreementToDate: string | null;
+  optionToDate: string | null;
+  contractType: ContractType;
+  currency: Currency;
 
   assigned: User;
   prospects: User[];
@@ -114,6 +154,7 @@ export type Skill = {
   level: number;
   favourite: boolean;
 
+  keywordId: number;
   keyword: {
     id: number;
     masterSynonym: string;
@@ -153,4 +194,10 @@ export type Image = {
 export type MutableEntity = {
   createdDateTime?: string;
   updatedDateTime?: string;
+};
+
+export type Currency = {
+  id: number;
+  currencyCode: string | null;
+  description: string | null;
 };

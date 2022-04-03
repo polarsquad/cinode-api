@@ -2,7 +2,7 @@
 
 **Unofficial** Node.js API client for [Cinode](https://cinode.com).
 
-> **NOTE:** 🚧 This client is still very much in development and shouldn't be considered stable before version 1.0.0 🚧
+> 🚧 This client is still very much in development and might change drastically 🚧
 
 This client has support for:
 
@@ -16,25 +16,31 @@ This client has support for:
 
 ## Configuration
 
-**NOTE:** This library is moving away from environment variable based configuration but it is still a work in progress.
+1. Obtain API tokens and configuration from: <https://app.cinode.com/yourcompany/account>
+    - The `yourcompany` part of the URL is your company name in the configuration
+1. Import and configure the client:
 
-To make this work, you'll need to set the following environment variables:
+    ```typescript
+    import { Api } from '@polarsquad/cinode-api/api'
+    import clientBuilder from '@polarsquad/cinode-api/client'
+    import { CinodeService } from '@polarsquad/cinode-api/service'
 
-- `CINODE_COMPANY_ID`
-- `CINODE_COMPANY_NAME`
-- `CINODE_ACCESS_ID`
-- `CINODE_ACCESS_SECRET`
-
-The company name is the `yourcompany` part in the Cinode URL. To obtain the other variables, create a personal API
-account under <https://app.cinode.com/yourcompany/account> and copy the company ID, Access ID and Access secret.
+    const api = new Api(
+      {
+        id: 1234,               // Company ID
+        name: 'yourcompany'     // Company name
+      },
+      clientBuilder(
+        'CINODE_ACCESS_ID',     // Cinode Access ID
+        'CINODE_ACCESS_SECRET'  // Cinode Access Secret
+      )
+    )
+    const ignoredEmails = []    // User emails to ignore
+    const backofficeTeams = []  // Teams IDs to mark as "backoffice"
+    const service = new CinodeService(api, ignoredEmails, backofficeTeams)
+    ```
 
 ## Development
-
-Create a placeholder `.env` file for development:
-
-```sh
-echo -e "CINODE_COMPANY_ID=1234\nCINODE_COMPANY_NAME=foobarbaz\nCINODE_ACCESS_ID=foo\nCINODE_ACCESS_SECRET=bar" > .env
-```
 
 ### Useful commands
 

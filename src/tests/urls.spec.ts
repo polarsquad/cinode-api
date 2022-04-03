@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import 'mocha';
-import { cinodeConfig } from '../config';
 
 import {
   buildProjectUrlFromAssignment,
@@ -9,43 +8,48 @@ import {
   parseProjectUrl,
 } from '../urls';
 
-import { project, assignment } from './test-builder';
+import { project, assignment, company } from './test-builder';
 
 describe('cinode utils', () => {
+  const TEST_COMPANY_NAME = 'foobarbaz';
+
   context('buildProjectUrlFromAssignment', () => {
     it('return spaces as dashes', () => {
       expect(
         buildProjectUrlFromAssignment(
+          company({ name: TEST_COMPANY_NAME }),
           assignment({
             project: project({ id: 123, title: 'foo bar' }),
           })
         )
       ).to.equal(
-        `https://app.cinode.com/${cinodeConfig.companyName}/projects/123/foo-bar`
+        `https://app.cinode.com/${TEST_COMPANY_NAME}/projects/123/foo-bar`
       );
     });
 
     it('should trim extra spaces', () => {
       expect(
         buildProjectUrlFromAssignment(
+          company({ name: TEST_COMPANY_NAME }),
           assignment({
             project: { id: 123, title: 'foo        bar' },
           })
         )
       ).to.equal(
-        `https://app.cinode.com/${cinodeConfig.companyName}/projects/123/foo-bar`
+        `https://app.cinode.com/${TEST_COMPANY_NAME}/projects/123/foo-bar`
       );
     });
 
     it('return äö as ao', () => {
       expect(
         buildProjectUrlFromAssignment(
+          company({ name: TEST_COMPANY_NAME }),
           assignment({
             project: { id: 123, title: 'föö bär' },
           })
         )
       ).to.equal(
-        `https://app.cinode.com/${cinodeConfig.companyName}/projects/123/foo-bar`
+        `https://app.cinode.com/${TEST_COMPANY_NAME}/projects/123/foo-bar`
       );
     });
   });
@@ -54,7 +58,7 @@ describe('cinode utils', () => {
     it('should identify project url', () => {
       expect(
         isProjectUrl(
-          `https://app.cinode.com/${cinodeConfig.companyName}/projects/89399/aws-expert`
+          `https://app.cinode.com/${TEST_COMPANY_NAME}/projects/89399/aws-expert`
         )
       ).to.eql(true);
     });
@@ -62,7 +66,7 @@ describe('cinode utils', () => {
     it('should not mess up with customer url', () => {
       expect(
         isProjectUrl(
-          `https://app.cinode.com/${cinodeConfig.companyName}/customers/58712/58712-unknown`
+          `https://app.cinode.com/${TEST_COMPANY_NAME}/customers/58712/58712-unknown`
         )
       ).to.eql(false);
     });
@@ -72,12 +76,12 @@ describe('cinode utils', () => {
     it('should parse project id', () => {
       expect(
         parseProjectUrl(
-          `https://app.cinode.com/${cinodeConfig.companyName}/projects/88523/Containers-and-Docker-basics-workshops`
+          `https://app.cinode.com/${TEST_COMPANY_NAME}/projects/88523/Containers-and-Docker-basics-workshops`
         )
       ).to.eql(88523);
       expect(
         parseProjectUrl(
-          `https://app.cinode.com/${cinodeConfig.companyName}/projects/89399/aws-expert`
+          `https://app.cinode.com/${TEST_COMPANY_NAME}/projects/89399/aws-expert`
         )
       ).to.eql(89399);
     });

@@ -3,6 +3,7 @@ export const versionControlSkill = {
   level: 5,
   levelGoal: null,
   levelGoalDeadline: null,
+  keywordId: 686,
   keyword: {
     id: 686,
     type: 6,
