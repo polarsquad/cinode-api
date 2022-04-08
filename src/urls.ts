@@ -1,5 +1,4 @@
 import Urlify from 'urlify';
-import { cinodeConfig } from './config';
 
 // Warning: This was reverse engineered how they build the url
 // so there might be cases where this produces invalid url
@@ -11,12 +10,19 @@ const urlify = Urlify.create({
   trim: true,
 });
 
-import type { User, Project, Assignment, CustomerBase, Image } from './types';
+import type {
+  User,
+  Project,
+  Assignment,
+  CustomerBase,
+  Image,
+  Company,
+} from './types';
 
-export const buildProjectUrl = (project: Project): string =>
-  `https://app.cinode.com/${cinodeConfig.companyName}/projects/${
-    project.id
-  }/${urlify(project.title)}`;
+export const buildProjectUrl = (company: Company, project: Project): string =>
+  `https://app.cinode.com/${company.name}/projects/${project.id}/${urlify(
+    project.title
+  )}`;
 
 const PROJECT_URL_REGEX =
   /https:\/\/app.cinode.com\/[\w-]+\/projects\/([0-9]+)\/.*/i;
@@ -33,33 +39,39 @@ export const parseProjectUrl = (url: string): number => {
   throw new Error(`Invalid Cinode project url: ${url}`);
 };
 
-export const buildCustomerUrl = (customer: CustomerBase) =>
-  `https://app.cinode.com/${cinodeConfig.companyName}/customers/${
+export const buildCustomerUrl = (company: Company, customer: CustomerBase) =>
+  `https://app.cinode.com/${company.name}/customers/${customer.id}/${
     customer.id
-  }/${customer.id}-${urlify(customer.name)}`;
+  }-${urlify(customer.name)}`;
 
-export const buildProjectRoleUrl = (project: Project, assignment: Assignment) =>
-  `${buildProjectUrl(project)}/roles/${assignment.id}/${urlify(
+export const buildProjectRoleUrl = (
+  company: Company,
+  project: Project,
+  assignment: Assignment
+) =>
+  `${buildProjectUrl(company, project)}/roles/${assignment.id}/${urlify(
     assignment.title
   )}`;
 
-export const buildProjectPersonsUrl = (project: Project) =>
-  `${buildProjectUrl(project)}/persons`;
+export const buildProjectPersonsUrl = (company: Company, project: Project) =>
+  `${buildProjectUrl(company, project)}/persons`;
 
-export const buildProjectRoleTabUrl = (project: Project) =>
-  `${buildProjectUrl(project)}/roles`;
+export const buildProjectRoleTabUrl = (company: Company, project: Project) =>
+  `${buildProjectUrl(company, project)}/roles`;
 
-export const buildProjectUrlFromAssignment = (assignment: Assignment) =>
-  buildProjectUrl(assignment.project);
+export const buildProjectUrlFromAssignment = (
+  company: Company,
+  assignment: Assignment
+) => buildProjectUrl(company, assignment.project);
 
-export const buildUserUrl = (user: User) =>
-  `https://app.cinode.com/${cinodeConfig.companyName}/organisation/employees/${user.companyUserId}/${user.seoId}`;
+export const buildUserUrl = (company: Company, user: User) =>
+  `https://app.cinode.com/${company.name}/organisation/employees/${user.companyUserId}/${user.seoId}`;
 
-export const getUserDesiredAssignmentUrl = (user: User) =>
-  `https://app.cinode.com/${cinodeConfig.companyName}/organisation/employees/${user.companyUserId}/${user.seoId}/profile`;
+export const getUserDesiredAssignmentUrl = (company: Company, user: User) =>
+  `https://app.cinode.com/${company.name}/organisation/employees/${user.companyUserId}/${user.seoId}/profile`;
 
-export const getPersonalProfileUrl = (): string =>
-  `https://app.cinode.com/${cinodeConfig.companyName}/profile`;
+export const getPersonalProfileUrl = (company: Company): string =>
+  `https://app.cinode.com/${company.name}/profile`;
 
 export const getImageUrl = (image: Image): string =>
   `https://p.cinodestatic.net/profile_images/${image.imageFileName.slice(

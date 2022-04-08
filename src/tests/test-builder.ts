@@ -1,5 +1,11 @@
-import { Skill, User, Project, Assignment } from '../types';
+import { Skill, User, Project, Assignment, Company } from '../types';
 import { states, stages } from '../model';
+
+export const company = (props?: Partial<Company>): Company => ({
+  id: 0,
+  name: '',
+  ...props,
+});
 
 export const skill = (props?): Skill => ({
   keywordId: 1,

@@ -1,7 +1,6 @@
 import memoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
-import { cinodeConfig } from './config';
-import clientBuilder from './client';
+import { Company } from './types';
 
 /**
  * @deprecated
@@ -10,30 +9,32 @@ import clientBuilder from './client';
  */
 export class Api {
   private readonly client;
-  private companyId;
+  private company: Company;
 
-  constructor(companyId, client) {
-    this.companyId = companyId;
+  constructor(company: Company, client) {
+    this.company = company;
     this.client = client;
   }
 
   listUsers() {
-    return this.client.get(`v0.1/companies/${this.companyId}/users`).json();
+    return this.client.get(`v0.1/companies/${this.company.id}/users`).json();
   }
 
   listAllCustomers() {
-    return this.client.get(`v0.1/companies/${this.companyId}/customers`).json();
+    return this.client
+      .get(`v0.1/companies/${this.company.id}/customers`)
+      .json();
   }
 
   getCustomer(id) {
     return this.client
-      .get(`v0.1/companies/${this.companyId}/customers/${id}`)
+      .get(`v0.1/companies/${this.company.id}/customers/${id}`)
       .json();
   }
 
   listAllProjects(query = {}) {
     return this.client
-      .post(`v0.1/companies/${this.companyId}/projects/search`, {
+      .post(`v0.1/companies/${this.company.id}/projects/search`, {
         json: query,
       })
       .json()
@@ -42,7 +43,7 @@ export class Api {
           [...Array(Math.ceil(totalItems / itemsPerPage)).keys()].map(
             (pageIndex) =>
               this.client
-                .post(`v0.1/companies/${this.companyId}/projects/search`, {
+                .post(`v0.1/companies/${this.company.id}/projects/search`, {
                   json: { ...query, pageAndSortBy: { page: pageIndex + 1 } },
                 })
                 .json()
@@ -53,7 +54,7 @@ export class Api {
 
   getProject(id) {
     return this.client
-      .get(`v0.1/companies/${this.companyId}/projects/${id}`)
+      .get(`v0.1/companies/${this.company.id}/projects/${id}`)
       .json();
   }
 
@@ -64,22 +65,20 @@ export class Api {
   updateProject(projectId, changes) {
     return this.getProject(projectId).then((project) =>
       this.client
-        .put(`v0.1/companies/${this.companyId}/projects/${projectId}`, {
+        .put(`v0.1/companies/${this.company.id}/projects/${projectId}`, {
           json: {
             title: project.title,
             customerId: project.customerId,
             description: project.description,
             identifier: project.identifier,
             customerIdentifier: project.customerIdentifier,
-            intermediatorId: project.intermediator
-              ? project.intermediatorId
-              : null,
+            intermediatorId: project.intermediator?.id ?? null,
             estimatedCloseDate: project.estimatedCloseDate,
             estimatedValue: project.estimatedValue,
             probability: project.probability,
             pipelineId: project.pipelineId,
             pipelineStageId: project.currentStageId,
-            currencyId: project.currency ? project.currencyId : null,
+            currencyId: project.currency?.id ?? null,
             projectState: project.currentState,
             teamId: project.teamId,
 
@@ -92,13 +91,13 @@ export class Api {
 
   getUser(userId) {
     return this.client
-      .get(`v0.1/companies/${this.companyId}/users/${userId}`)
+      .get(`v0.1/companies/${this.company.id}/users/${userId}`)
       .json();
   }
 
   updateDesiredAssignment(userId, desiredAssignment) {
     return this.client
-      .patch(`v0.1/companies/${this.companyId}/users/${userId}`, {
+      .patch(`v0.1/companies/${this.company.id}/users/${userId}`, {
         json: [
           {
             path: 'desiredAssignment',
@@ -112,26 +111,26 @@ export class Api {
 
   getUserAssignments(userId) {
     return this.client
-      .get(`v0.1/companies/${this.companyId}/users/${userId}/roles`)
+      .get(`v0.1/companies/${this.company.id}/users/${userId}/roles`)
       .json();
   }
 
   getUserAbsences(userId) {
     return this.client
-      .get(`v0.1/companies/${this.companyId}/users/${userId}/absences`)
+      .get(`v0.1/companies/${this.company.id}/users/${userId}/absences`)
       .json();
   }
 
   getUserSkills(userId) {
     return this.client
-      .get(`v0.1/companies/${this.companyId}/users/${userId}/skills`)
+      .get(`v0.1/companies/${this.company.id}/users/${userId}/skills`)
       .json();
   }
 
   getUserProfileSkill(userId, skillId) {
     return this.client
       .get(
-        `v0.1/companies/${this.companyId}/users/${userId}/profile/skills/${skillId}`
+        `v0.1/companies/${this.company.id}/users/${userId}/profile/skills/${skillId}`
       )
       .json();
   }
@@ -149,7 +148,7 @@ export class Api {
   getProjectAssignment(projectId, assignmentId) {
     return this.client
       .get(
-        `v0.1/companies/${this.companyId}/projects/${projectId}/roles/${assignmentId}`
+        `v0.1/companies/${this.company.id}/projects/${projectId}/roles/${assignmentId}`
       )
       .json();
   }
@@ -159,7 +158,7 @@ export class Api {
       (assignment) =>
         this.client
           .put(
-            `v0.1/companies/${this.companyId}/projects/${projectId}/roles/${assignmentId}`,
+            `v0.1/companies/${this.company.id}/projects/${projectId}/roles/${assignmentId}`,
             {
               json: {
                 // Only following fields are modifiable
@@ -174,7 +173,7 @@ export class Api {
                 optionToDate: assignment.optionToDate,
                 contractType: assignment.contractType,
                 extentType: assignment.extentType,
-                currencyId: assignment.currencyId,
+                currencyId: assignment.currency?.id ?? null,
 
                 ...updatedFields,
               },
@@ -219,7 +218,7 @@ export class Api {
           )
           .flat();
         return this.client
-          .post(`v0.1/companies/${this.companyId}/skills/search`, {
+          .post(`v0.1/companies/${this.company.id}/skills/search`, {
             json: {
               skills: keywordIds.map((keywordId) => ({
                 keywordId,
@@ -234,7 +233,7 @@ export class Api {
 
   whoHasSkill = (skill, min = 0, max = 5, limit = 100) =>
     this.client
-      .post(`v0.1/companies/${this.companyId}/skills/search/term`, {
+      .post(`v0.1/companies/${this.company.id}/skills/search/term`, {
         json: {
           term: skill,
           min,
@@ -246,19 +245,19 @@ export class Api {
 
   getUserImages = (userId) =>
     this.client
-      .get(`v0.1/companies/${this.companyId}/users/${userId}/images`)
+      .get(`v0.1/companies/${this.company.id}/users/${userId}/images`)
       .json();
 
   async getUserByEmail(email) {
     const userId = await this.resolveUserIdByEmail(email);
     return this.client
-      .get(`v0.1/companies/${this.companyId}/users/${userId}`)
+      .get(`v0.1/companies/${this.company.id}/users/${userId}`)
       .json();
   }
 
   searchUsers = (term) =>
     this.client
-      .post(`v0.1/companies/${this.companyId}/users/search`, {
+      .post(`v0.1/companies/${this.company.id}/users/search`, {
         json: {
           term: term,
         },
@@ -267,26 +266,29 @@ export class Api {
 
   getProfile = (userId) =>
     this.client
-      .get(`v0.1/companies/${this.companyId}/users/${userId}/profile`)
+      .get(`v0.1/companies/${this.company.id}/users/${userId}/profile`)
       .json();
 
   addSkill = (userId, skill, level) =>
     this.client
-      .post(`v0.1/companies/${this.companyId}/users/${userId}/profile/skills`, {
-        headers: {
-          'Content-type': 'application/json-patch+json',
-        },
-        json: {
-          name: skill,
-          level,
-        },
-      })
+      .post(
+        `v0.1/companies/${this.company.id}/users/${userId}/profile/skills`,
+        {
+          headers: {
+            'Content-type': 'application/json-patch+json',
+          },
+          json: {
+            name: skill,
+            level,
+          },
+        }
+      )
       .json();
 
   updateSkill = (userId, skillId, keywordSynonymId, level) =>
     this.client
       .put(
-        `v0.1/companies/${this.companyId}/users/${userId}/profile/skills/${skillId}`,
+        `v0.1/companies/${this.company.id}/users/${userId}/profile/skills/${skillId}`,
         {
           json: {
             keywordSynonymId,
@@ -299,15 +301,7 @@ export class Api {
   deleteSkill = (userId, skillId) =>
     this.client
       .delete(
-        `v0.1/companies/${this.companyId}/users/${userId}/profile/skills/${skillId}`
+        `v0.1/companies/${this.company.id}/users/${userId}/profile/skills/${skillId}`
       )
       .json();
 }
-
-/**
- * @deprecated Start using the constructor
- */
-export default new Api(
-  cinodeConfig.companyId,
-  clientBuilder(cinodeConfig.accessId, cinodeConfig.accessSecret)
-);
