@@ -6,7 +6,7 @@ import {
   getImageUrl,
   isProjectUrl,
   parseProjectUrl,
-} from '../urls';
+} from '../src/urls';
 
 import { project, assignment, company } from './test-builder';
 
