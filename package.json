@@ -1,6 +1,6 @@
 {
   "name": "@polarsquad/cinode-api",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Cinode API for the Cinode platform",
   "homepage": "https://github.com/polarsquad/cinode-api#readme",
   "bugs": {
@@ -84,7 +84,6 @@
   "license": "MIT",
   "dependencies": {
     "bottleneck": "^2.19.5",
-    "dotenv": "^16.0.0",
     "expiry-map": "^2.0.0",
     "google-spreadsheet": "^3.2.0",
     "got": "^12.0.3",

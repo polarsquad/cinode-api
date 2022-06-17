@@ -31,8 +31,8 @@ This client has support for:
         name: 'yourcompany'     // Company name
       },
       clientBuilder(
-        'CINODE_ACCESS_ID',     // Cinode Access ID
-        'CINODE_ACCESS_SECRET'  // Cinode Access Secret
+        'cinodeaccessid',       // Cinode Access ID
+        'cinodeaccessecret'     // Cinode Access Secret
       )
     )
     const ignoredEmails = []    // User emails to ignore
