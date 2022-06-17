@@ -23,10 +23,7 @@
     "./model": "./dist/model",
     "./service": "./dist/service",
     "./urls": "./dist/urls",
-    "./utils": "./dist/utils",
-    "./stats/builder": "./dist/stats/builder",
-    "./stats/storage": "./dist/stats/storage",
-    "./stats/types": "./dist/stats/types"
+    "./utils": "./dist/utils"
   },
   "typesVersions": {
     "*": {
@@ -53,15 +50,6 @@
       ],
       "utils": [
         "./dist/utils.d.ts"
-      ],
-      "stats/builder": [
-        "./dist/stats/builder.d.ts"
-      ],
-      "stats/storage": [
-        "./dist/stats/storage.d.ts"
-      ],
-      "stats/types": [
-        "./dist/stats/types.d.ts"
       ]
     }
   },
