@@ -92,11 +92,12 @@ describe('cinode utils', () => {
       expect(
         getImageUrl({
           id: 63823,
+          companyId: 1234,
           imageFileName: '9c73fe2f-933b-484b-a7c6-f7681165f623',
           extension: 'jpeg',
         })
       ).to.eql(
-        'https://p.cinodestatic.net/profile_images/9c/73/9c73fe2f-933b-484b-a7c6-f7681165f623_200_200.jpeg'
+        'https://p.cinodestatic.net/_images/1234/9c/73/9c73fe2f-933b-484b-a7c6-f7681165f623_200_200.jpeg'
       );
     });
   });
