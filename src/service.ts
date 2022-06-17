@@ -17,6 +17,7 @@ import type {
   Skill,
   User,
   UserFilter,
+  Company,
 } from './types';
 import { getImageUrl } from './urls';
 import {
@@ -301,5 +302,9 @@ export class CinodeService {
 
   async getProfile(userId: number): Promise<Profile | undefined> {
     return this.api.getProfile(userId).catch(ignoreError);
+  }
+
+  getCompany(): Company {
+    return this.api.company as Company;
   }
 }
