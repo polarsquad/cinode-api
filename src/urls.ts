@@ -74,9 +74,8 @@ export const getPersonalProfileUrl = (company: Company): string =>
   `https://app.cinode.com/${company.name}/profile`;
 
 export const getImageUrl = (image: Image): string =>
-  `https://p.cinodestatic.net/profile_images/${image.imageFileName.slice(
-    0,
-    2
-  )}/${image.imageFileName.slice(2, 4)}/${image.imageFileName}_200_200.${
-    image.extension
-  }`;
+  `https://p.cinodestatic.net/_images/${
+    image.companyId
+  }/${image.imageFileName.slice(0, 2)}/${image.imageFileName.slice(2, 4)}/${
+    image.imageFileName
+  }_200_200.${image.extension}`;

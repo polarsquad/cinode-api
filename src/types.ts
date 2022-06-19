@@ -186,7 +186,7 @@ export type Tag = {
 
 export type Image = {
   id: number;
-
+  companyId: number;
   imageFileName: string;
   extension: string;
 };
