@@ -1,7 +1,15 @@
 {
-    "extension": ["ts"],
-    "node-option": ["experimental-specifier-resolution=node", "loader=ts-node/esm", "no-warnings"],
-    "spec": ["src/tests/**/*.spec.ts"],
+    "extension": [
+        "ts"
+    ],
+    "node-option": [
+        "experimental-specifier-resolution=node",
+        "loader=ts-node/esm",
+        "no-warnings"
+    ],
+    "spec": [
+        "tests/**/*.spec.ts"
+    ],
     "recursive": true,
     "exit": true
 }

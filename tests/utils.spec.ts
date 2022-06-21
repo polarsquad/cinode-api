@@ -6,8 +6,8 @@ import {
   WithProfile,
   HasTeamInformation,
   User,
-} from '../types';
-import { states } from '../model';
+} from '../src/types';
+import { states } from '../src/model';
 
 import {
   hasActiveRole,
@@ -20,7 +20,7 @@ import {
   employmentStarted,
   isActiveProject,
   dropByEmail,
-} from '../utils';
+} from '../src/utils';
 
 import { skill, user, project, assignment } from './test-builder';
 

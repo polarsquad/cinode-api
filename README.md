@@ -35,9 +35,7 @@ This client has support for:
         'cinodeaccessecret'     // Cinode Access Secret
       )
     )
-    const ignoredEmails = []    // User emails to ignore
-    const backofficeTeams = []  // Teams IDs to mark as "backoffice"
-    const service = new CinodeService(api, ignoredEmails, backofficeTeams)
+    const service = new CinodeService(api)
     ```
 
 ## Development

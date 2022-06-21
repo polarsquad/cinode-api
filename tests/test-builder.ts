@@ -1,5 +1,5 @@
-import { Skill, User, Project, Assignment, Company } from '../types';
-import { states, stages } from '../model';
+import { Skill, User, Project, Assignment, Company } from '../src/types';
+import { states, stages } from '../src/model';
 
 export const company = (props?: Partial<Company>): Company => ({
   id: 0,

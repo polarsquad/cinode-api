@@ -54,7 +54,11 @@ export class CinodeService {
   ignoredEmails: string[];
   backofficeTeams: string[];
 
-  constructor(api: any, ignoredEmails: string[], backofficeTeams: string[]) {
+  constructor(
+    api: any,
+    ignoredEmails: string[] = [],
+    backofficeTeams: string[] = []
+  ) {
     this.api = api;
     this.ignoredEmails = ignoredEmails;
     this.backofficeTeams = backofficeTeams;
