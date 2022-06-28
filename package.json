@@ -73,7 +73,6 @@
   "dependencies": {
     "bottleneck": "^2.19.5",
     "expiry-map": "^2.0.0",
-    "google-spreadsheet": "^3.2.0",
     "got": "^12.0.3",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
