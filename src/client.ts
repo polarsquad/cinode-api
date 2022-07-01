@@ -1,4 +1,4 @@
-import got from 'got';
+import got, { Options } from 'got';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 import moment from 'moment';
 import Bottleneck from 'bottleneck';
@@ -29,14 +29,13 @@ export default (apiToken: string) =>
     prefixUrl: CINODE_API_URL,
     hooks: {
       beforeRequest: [
-        limiter.wrap(() => Promise.resolve()),
-        async (options) => {
+        limiter.wrap(async (options: Options) => {
           if (!isValidJwtToken(apiToken)) {
             throw new Error('Cinode API token is expired!');
           }
 
           options.headers['Authorization'] = `Bearer ${apiToken}`;
-        },
+        }),
       ],
     },
   });
