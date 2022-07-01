@@ -2,7 +2,7 @@
 // NOTE:
 // This doesn't include all fields that are available through the API, only used.
 // Feel free to add the fields you need.
-// https://api.cinode.com/docs/index.html
+// https://api.cinode.app/docs/index.html
 
 export type Company = {
   id: number;

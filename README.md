@@ -16,8 +16,10 @@ This client has support for:
 
 ## Configuration
 
-1. Obtain API tokens and configuration from: <https://app.cinode.com/yourcompany/account>
+1. Enable the Cinode REST API for your company ([docs](https://support.cinode.com/en/articles/3994666-cinode-rest-api))
+1. Create a Cinode user and give it the roles "Api" and "Manager" in <https://app.cinode.com/polarsquad/administration/users/employees/>
     - The `yourcompany` part of the URL is your company name in the configuration
+1. Create a Cinode token for the bot user in <https://app.cinode.com/polarsquad/administration/integrations/tokens>
 1. Import and configure the client:
 
     ```typescript
@@ -31,8 +33,7 @@ This client has support for:
         name: 'yourcompany'     // Company name
       },
       clientBuilder(
-        'cinodeaccessid',       // Cinode Access ID
-        'cinodeaccessecret'     // Cinode Access Secret
+        'cinodeapitoken',       // Cinode API token
       )
     )
     const service = new CinodeService(api)
@@ -60,7 +61,7 @@ This client has support for:
 
 ## Links
 
-- [Official Cinode API documentation](https://api.cinode.com/docs/index.html)
+- [Official Cinode API documentation](https://api.cinode.app/docs/index.html)
 
 ## License
 
