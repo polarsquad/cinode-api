@@ -66,7 +66,3 @@ This client has support for:
 ## License
 
 See [LICENSE](./LICENSE) for more details.
-
-## TODO
-
-- Use static (JWT) tokens for the API instead of personal ones
