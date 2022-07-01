@@ -1,5 +1,7 @@
 name: Test
 on: [push]
+env:
+  HUSKY: '0'
 jobs:
   test:
     runs-on: ubuntu-latest
