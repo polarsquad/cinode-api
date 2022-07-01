@@ -28,8 +28,7 @@ import {
   onlyInTeams,
 } from './utils';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const ignoreError = () => {};
+const ignoreError = () => undefined;
 
 const keywordMatch =
   (name: string) =>
@@ -142,9 +141,9 @@ export class CinodeService {
   getUserImageUrl = memoize(
     async (userId: number): Promise<string | undefined> => {
       const images = (await this.api.getUserImages(userId)) as Image[];
-      if (images.length) {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return getImageUrl(images.pop()!);
+      const lastImage = images.pop();
+      if (lastImage) {
+        return getImageUrl(lastImage);
       }
     },
     {

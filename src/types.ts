@@ -85,8 +85,11 @@ export type WithProfile = {
 
 export type Profile = {
   skills: Skill[];
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  employers: {}[];
+  employers: Employer[];
+};
+
+export type Employer = {
+  id: number | null;
 };
 
 export enum ContractType {

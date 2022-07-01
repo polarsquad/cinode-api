@@ -44,16 +44,15 @@ const latelyChangedFirst = (a: Skill, b: Skill): number => {
   const aChangeDate = findLatestChangeDate(a);
   const bChangeDate = findLatestChangeDate(b);
 
-  if (!aChangeDate && !bChangeDate) {
+  if (aChangeDate && bChangeDate) {
+    return new Date(bChangeDate).getTime() - new Date(aChangeDate).getTime();
+  } else if (!aChangeDate && !bChangeDate) {
     return 0;
-  } else if (aChangeDate && !bChangeDate) {
+  } else if (aChangeDate) {
     return -1;
-  } else if (!aChangeDate && bChangeDate) {
+  } else {
     return 1;
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return new Date(bChangeDate!).getTime() - new Date(aChangeDate!).getTime();
 };
 
 const favouriteFirst = (a: Skill, b: Skill): number => {
@@ -188,7 +187,7 @@ export const isAway = (
 };
 
 export const getOrderedSkills = (user: User & WithProfile) => {
-  if (!user.profile.skills) {
+  if (!user.profile?.skills) {
     return [];
   }
   return user.profile.skills
