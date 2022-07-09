@@ -1,9 +1,10 @@
-export const versionControlSkill = {
+import { CompanyUserProfileSkill } from '../src/types';
+
+export const versionControlSkill: CompanyUserProfileSkill = {
   profileId: 93750,
   level: 5,
   levelGoal: null,
   levelGoalDeadline: null,
-  keywordId: 686,
   keyword: {
     id: 686,
     type: 6,

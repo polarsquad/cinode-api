@@ -1,46 +1,58 @@
 import moment from 'moment';
 
-import type {
-  Skill,
-  User,
-  Project,
-  Assignment,
-  Absence,
-  TimeSpan,
-  HasAssignments,
-  WithProfile,
-  HasTeamInformation,
-  HasAbsenceInformation,
-} from './types';
-
 import {
-  states,
-  stages,
   projectStateToHumanReadable,
   projectStageToHumanReadable,
 } from './model';
+import {
+  AbsencePeriodDto,
+  CompanyUser,
+  CompanyUserBase,
+  CompanyUserExtended,
+  CompanyUserProfileSkill,
+  CompanyUserProfileSkillHistory,
+  CompanyUserSkill,
+  HasAbsenceInformation,
+  HasAssignments,
+  HasTeamInformation,
+  Project,
+  ProjectAssignmentBase,
+  ProjectPipelineStage,
+  ProjectState,
+  TimeSpan,
+  WithProfile,
+} from './types';
 
 const latestChangeFirst = (
-  a: { changeDateTime: string },
-  b: { changeDateTime: string }
+  a: CompanyUserProfileSkillHistory,
+  b: CompanyUserProfileSkillHistory
 ): number => {
   return (
-    new Date(b.changeDateTime).getTime() - new Date(a.changeDateTime).getTime()
+    new Date(b.changeDateTime ?? 0).getTime() -
+    new Date(a.changeDateTime ?? 0).getTime()
   );
 };
 
-export const findLatestChangeDate = (skill: Skill): string | null => {
+export const findLatestChangeDate = (
+  skill: CompanyUserProfileSkill
+): string | null => {
   if (!skill.changeHistory || !skill.changeHistory.length) {
     return null;
   }
 
-  return skill.changeHistory.sort(latestChangeFirst)[0].changeDateTime || null;
+  return skill.changeHistory.sort(latestChangeFirst)[0].changeDateTime ?? null;
 };
 
-const descendingBySkillLevel = (a: Skill, b: Skill): number =>
-  b.level - a.level;
+const descendingBySkillLevel = (
+  a: CompanyUserSkill,
+  b: CompanyUserSkill
+): number =>
+  (b.level ?? Number.MIN_SAFE_INTEGER) - (a.level ?? Number.MIN_SAFE_INTEGER);
 
-const latelyChangedFirst = (a: Skill, b: Skill): number => {
+const latelyChangedFirst = (
+  a: CompanyUserSkill,
+  b: CompanyUserSkill
+): number => {
   const aChangeDate = findLatestChangeDate(a);
   const bChangeDate = findLatestChangeDate(b);
 
@@ -55,7 +67,7 @@ const latelyChangedFirst = (a: Skill, b: Skill): number => {
   }
 };
 
-const favouriteFirst = (a: Skill, b: Skill): number => {
+const favouriteFirst = (a: CompanyUserSkill, b: CompanyUserSkill): number => {
   if (!a.favourite && b.favourite) {
     return 1;
   }
@@ -69,17 +81,20 @@ const favouriteFirst = (a: Skill, b: Skill): number => {
 // Have no clue, is this right way to resolve this
 // because there wasn't too much documentation about
 // the skill data structure.
-const resolveSkillTranslation = (lang, skill: Skill): string | null => {
+const resolveSkillTranslation = (
+  lang: string,
+  skill: CompanyUserProfileSkill
+): string | null => {
   if (!skill.translations || !skill.translations.length) {
     return null;
   }
 
   const translation = skill.translations.find(
-    (t) => t.profileTranslation.languageBranch.language.lang === lang
+    (t) => t.profileTranslation?.languageBranch?.language?.lang === lang
   );
 
   if (translation) {
-    return translation.keywordSynonym.name;
+    return translation.keywordSynonym?.name ?? null;
   }
 
   return null;
@@ -87,40 +102,36 @@ const resolveSkillTranslation = (lang, skill: Skill): string | null => {
 
 // Filter for project list to select only projects that are in specific state
 const isInState =
-  (...states: number[]) =>
+  (...states: ProjectState[]) =>
   (project: Project) =>
-    states.includes(project.currentState);
+    states.includes(project.currentState ?? Number.MIN_SAFE_INTEGER);
 
-export const isInOpenState = isInState(states.PROJECT_STATE_Open);
+export const isInOpenState = isInState(ProjectState.Open);
 
-export const isInWonState = isInState(states.PROJECT_STATE_Won);
+export const isInWonState = isInState(ProjectState.Won);
 
 // Filter for project list to select only projects that are in specific stage
-const isInStage =
+export const isInStage =
   (...stages: number[]) =>
   (project: Project) =>
-    stages.includes(project.currentStageId);
-
-export const isInProposalSentStage = isInStage(
-  stages.PROJECT_PIPELINE_STAGE_Proposal_Sent
-);
+    stages.includes(project.currentStageId ?? Number.MIN_SAFE_INTEGER);
 
 export const isActiveProject = (project: Project) =>
-  isInWonState(project) && project.assignments.some(isActiveNow);
+  isInWonState(project) && project.assignments?.some(isActiveNow);
 
 // Filter for users to only users that are updated after specific date
 export const notUpdatedSince =
-  (since) =>
-  ({ updatedDateTime }) =>
+  (since: moment.MomentInput) =>
+  ({ updatedDateTime }: CompanyUserExtended) =>
     moment(updatedDateTime).isBefore(since);
 
-export const employmentStarted = (user) => {
+export const employmentStarted = (user: CompanyUser) => {
   return (
     !user.employmentStartDate || moment(user.employmentStartDate).isBefore()
   );
 };
 
-export const endingEmploymentInWeek = (user) => {
+export const endingEmploymentInWeek = (user: CompanyUser) => {
   return (
     !!user.employmentEndDate &&
     moment(user.employmentEndDate).isBefore(moment().add(1, 'week'))
@@ -128,7 +139,7 @@ export const endingEmploymentInWeek = (user) => {
 };
 
 export const onlyInTeams = (
-  user: User & HasTeamInformation,
+  user: CompanyUserBase & HasTeamInformation,
   teamNames: string[]
 ): boolean => {
   if (!user.teamMembers) {
@@ -136,15 +147,17 @@ export const onlyInTeams = (
       "Trying to use 'onlyInTeams' filter to data that is scarce user data!"
     );
   }
-  return user.teamMembers.every(({ team: { name } }) =>
-    teamNames.includes(name)
+  return user.teamMembers.every(({ team }) =>
+    team?.name ? teamNames.includes(team.name) : false
   );
 };
 
 export const dropByEmail =
   (emails: string[]) =>
-  (user: User): boolean => {
-    return !emails.includes(user.companyUserEmail);
+  (user: CompanyUserExtended): boolean => {
+    return user.companyUserEmail
+      ? !emails.includes(user.companyUserEmail)
+      : true;
   };
 
 export const isActiveNow = (item: TimeSpan): boolean =>
@@ -152,24 +165,26 @@ export const isActiveNow = (item: TimeSpan): boolean =>
   (moment(item.startDate).isBefore() &&
     (!item.endDate || moment(item.endDate).isAfter()));
 
-export const assignmentInFuture = (assignment: Assignment) =>
+export const assignmentInFuture = (assignment: ProjectAssignmentBase) =>
   assignment.startDate && moment(assignment.startDate).isAfter();
 
-export const hasActiveRole = (user: User & HasAssignments): boolean => {
-  return user.assignments.assigned.some(
-    (assignment) =>
-      (!assignment.startDate ||
-        moment(assignment.startDate).isBefore(moment().add(2, 'weeks'))) &&
-      (!assignment.endDate || moment(assignment.endDate).isAfter())
+export const hasActiveRole = (user: HasAssignments): boolean => {
+  return (
+    user.assignments.assigned?.some(
+      (assignment) =>
+        (!assignment.startDate ||
+          moment(assignment.startDate).isBefore(moment().add(2, 'weeks'))) &&
+        (!assignment.endDate || moment(assignment.endDate).isAfter())
+    ) ?? false
   );
 };
 
-export const onlyActivePeople = (user: User & HasTeamInformation): boolean => {
+export const onlyActivePeople = (user: HasTeamInformation): boolean => {
   return employmentStarted(user) && !endingEmploymentInWeek(user);
 };
 
 export const isAway = (
-  user: User & HasTeamInformation & HasAbsenceInformation
+  user: HasTeamInformation & HasAbsenceInformation
 ): boolean => {
   if (!user.absences) return false;
   if (user.absences.length === 0) return false;
@@ -186,31 +201,40 @@ export const isAway = (
   return false;
 };
 
-export const getOrderedSkills = (user: User & WithProfile) => {
+export const getOrderedSkills = (user: WithProfile) => {
   if (!user.profile?.skills) {
     return [];
   }
   return user.profile.skills
-    .filter((skill) => skill.level >= 4 || skill.favourite)
+    .filter(
+      (skill) =>
+        (skill.level ?? Number.MIN_SAFE_INTEGER) >= 4 || skill.favourite
+    )
     .sort(latelyChangedFirst)
     .sort(descendingBySkillLevel)
     .sort(favouriteFirst);
 };
 
-export const isActiveAssignment = (assignment: Assignment) =>
+export const isActiveAssignment = (assignment: ProjectAssignmentBase) =>
   isActiveNow(assignment) || assignmentInFuture(assignment);
 
-export const getActiveAssignments = (assignments: Assignment[]) =>
+export const getActiveAssignments = (assignments: ProjectAssignmentBase[]) =>
   assignments.filter(isActiveAssignment);
 
-export const getActiveAbsences = (absences: Absence[]) =>
+export const getActiveAbsences = (absences: AbsencePeriodDto[]) =>
   absences.filter(isActiveNow);
 
-export const resolveSkillName = (skill: Skill) => {
-  return resolveSkillTranslation('en', skill) || skill.keyword.masterSynonym;
+export const resolveSkillName = (skill: CompanyUserProfileSkill) => {
+  return resolveSkillTranslation('en', skill) || skill.keyword?.masterSynonym;
 };
 
 export const formatProjectState = (project: Project) =>
   projectStateToHumanReadable(project.currentState);
-export const formatProjectStage = (project: Project) =>
-  projectStageToHumanReadable(project.currentStageId);
+export const formatProjectStage = (
+  project: Project,
+  stages: ProjectPipelineStage[]
+) =>
+  projectStageToHumanReadable(
+    project.currentStageId ?? Number.MIN_SAFE_INTEGER,
+    stages
+  );

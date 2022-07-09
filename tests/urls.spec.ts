@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
+import { HasProject, ProjectAssignmentBase } from '../src/types';
 
 import {
   buildProjectUrlFromAssignment,
@@ -20,7 +21,7 @@ describe('cinode utils', () => {
           company({ name: TEST_COMPANY_NAME }),
           assignment({
             project: project({ id: 123, title: 'foo bar' }),
-          })
+          }) as ProjectAssignmentBase & HasProject
         )
       ).to.equal(
         `https://app.cinode.com/${TEST_COMPANY_NAME}/projects/123/foo-bar`
@@ -33,7 +34,7 @@ describe('cinode utils', () => {
           company({ name: TEST_COMPANY_NAME }),
           assignment({
             project: { id: 123, title: 'foo        bar' },
-          })
+          }) as ProjectAssignmentBase & HasProject
         )
       ).to.equal(
         `https://app.cinode.com/${TEST_COMPANY_NAME}/projects/123/foo-bar`
@@ -46,7 +47,7 @@ describe('cinode utils', () => {
           company({ name: TEST_COMPANY_NAME }),
           assignment({
             project: { id: 123, title: 'föö bär' },
-          })
+          }) as ProjectAssignmentBase & HasProject
         )
       ).to.equal(
         `https://app.cinode.com/${TEST_COMPANY_NAME}/projects/123/foo-bar`

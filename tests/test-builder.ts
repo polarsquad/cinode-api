@@ -1,5 +1,11 @@
-import { Skill, User, Project, Assignment, Company } from '../src/types';
-import { states, stages } from '../src/model';
+import {
+  Company,
+  CompanyUserExtended,
+  CompanyUserProfileSkill,
+  Project,
+  ProjectAssignmentBase,
+  ProjectState,
+} from '../src/types';
 
 export const company = (props?: Partial<Company>): Company => ({
   id: 0,
@@ -7,25 +13,28 @@ export const company = (props?: Partial<Company>): Company => ({
   ...props,
 });
 
-export const skill = (props?): Skill => ({
-  keywordId: 1,
-  changeDateTime: new Date().toString(),
+export const skill = (
+  props?: Partial<CompanyUserProfileSkill>
+): CompanyUserProfileSkill => ({
   ...props,
 });
 
-export const user = (props?): User => ({
-  changeDateTime: new Date().toString(),
+export const user = (
+  props?: Partial<CompanyUserExtended>
+): CompanyUserExtended => ({
   ...props,
 });
 
-export const project = (props?): Project => ({
+export const project = (props?: Partial<Project>): Project => ({
   id: 0,
   title: '',
-  currentState: states.PROJECT_STATE_Open,
-  currentStageId: stages.PROJECT_PIPELINE_STAGE_Opportunity,
+  currentState: ProjectState.Open,
+  currentStageId: 0,
   ...props,
 });
 
-export const assignment = (props?): Assignment => ({
+export const assignment = (
+  props?: Partial<ProjectAssignmentBase>
+): ProjectAssignmentBase => ({
   ...props,
 });

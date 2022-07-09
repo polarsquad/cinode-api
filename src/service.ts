@@ -1,55 +1,54 @@
 import memoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
 import type {
-  Absence,
-  Assignment,
-  CustomerBase,
-  Customer,
   HasAbsenceInformation,
   HasAssignments,
   HasImage,
   WithProfile,
   HasTeamInformation,
-  Image,
-  Profile,
-  Project,
-  ProjectTeam,
-  Skill,
-  User,
-  UserFilter,
   Company,
+  ProjectTeam,
+  UserFilter,
+  CompanyUser,
+  CompanyUserBase,
+  CompanyUserProfileSkill,
+  ProjectBase,
 } from './types';
 import { getImageUrl } from './urls';
 import {
-  hasActiveRole,
-  onlyActivePeople,
-  isActiveProject,
   dropByEmail,
+  hasActiveRole,
+  isActiveProject,
+  onlyActivePeople,
   onlyInTeams,
 } from './utils';
+import { Api } from './api';
 
 const ignoreError = () => undefined;
 
-const keywordMatch =
-  (name: string) =>
-  (item: Skill): boolean => {
-    return item.keyword.synonyms.some(
+const keywordMatch = (name: string) => (item: CompanyUserProfileSkill) => {
+  return (
+    item.keyword?.synonyms?.some(
       (syn) => syn.toLowerCase() === name.toLowerCase()
-    );
-  };
+    ) ?? false
+  );
+};
 
 // Note: this whole skill data model is pretty complex
 // and hard to understand without proper docs.
 // Somehow, managed to get updating skill work by finding
 // the synonym ID from the translations, but here's big
 // risk to come up some bugs.
-const resolveSynonymId = (skill, name) => {
-  const translation = skill.translations.find(keywordMatch(name));
+const resolveSynonymId = (skill: CompanyUserProfileSkill, name: string) => {
+  const translation = skill.translations?.find(keywordMatch(name));
+  if (!translation?.keywordSynonymId) {
+    throw new Error(`Could not find translation for name: ${name}`);
+  }
   return translation.keywordSynonymId;
 };
 
 export class CinodeService {
-  api: any;
+  api: Api;
   ignoredEmails: string[];
   backofficeTeams: string[];
 
@@ -63,47 +62,47 @@ export class CinodeService {
     this.backofficeTeams = backofficeTeams;
   }
 
-  async getAllProjects(): Promise<Project[]> {
-    return this.api
-      .listAllProjects()
-      .then((p: Project[]) =>
-        Promise.all(p.map(({ id }) => this.api.getProject(id)))
-      );
+  async getAllProjects() {
+    const projects = await this.api.listAllProjects();
+    return Promise.all(
+      projects.flatMap((p) => (p?.id ? [this.api.getProject(p.id)] : []))
+    );
   }
 
-  async getActiveProjects(): Promise<Project[]> {
+  async getActiveProjects() {
     return (await this.getAllProjects()).filter(isActiveProject);
   }
 
-  async getActiveCustomers(): Promise<Customer[]> {
+  async getActiveCustomers() {
     const active = await this.getActiveProjects();
-    const customerIds = [...new Set(active.map((p) => p.customer.id))];
+    const customerIds = [
+      ...new Set(
+        active.flatMap((p) => (p.customer?.id ? [p.customer.id] : []))
+      ),
+    ];
     return Promise.all(
       customerIds.map((customerId) => this.getCustomer(customerId))
     );
   }
 
-  async getAllCustomers(): Promise<Customer[]> {
-    return this.api
-      .listAllCustomers()
-      .then((c: CustomerBase[]) =>
-        Promise.all(c.map(({ id }) => this.api.getCustomer(id)))
-      );
-  }
-
-  async getCustomer(id: number): Promise<Customer> {
-    return (await this.api.getCustomer(id)) as Customer;
-  }
-
-  async getUserProjects(userId: number): Promise<Project[]> {
-    const assignments = (await this.api.getUserAssignments(userId)) as {
-      assigned: Assignment[];
-      prospect: Assignment[];
-    };
-
-    return [...assignments.assigned, ...assignments.prospect].map(
-      (a) => a.project
+  async getAllCustomers() {
+    const customers = await this.api.listAllCustomers();
+    return Promise.all(
+      customers.flatMap(({ id }) => (id ? [this.api.getCustomer(id)] : []))
     );
+  }
+
+  async getCustomer(id: number) {
+    return await this.api.getCustomer(id);
+  }
+
+  async getUserProjects(userId: number) {
+    const assignments = await this.api.getUserAssignments(userId);
+
+    return [
+      ...(assignments.assigned ?? []),
+      ...(assignments.prospect ?? []),
+    ].flatMap((a) => (a.project ? [a.project] : []));
   }
 
   async getUserSkills(userId: number) {
@@ -113,16 +112,20 @@ export class CinodeService {
   async getUserProfileSkill(userId: number, skillId: number) {
     return await this.api.getUserProfileSkill(userId, skillId);
   }
+
   getProjectsWithTeamMatesCache = new ExpiryMap(5 * 1000); // The project information doesn't get cached for that long time
   getProjectsWithTeamMates = memoize(
-    async (userId: number): Promise<(Project & ProjectTeam)[]> => {
+    async (userId: number): Promise<(ProjectBase & ProjectTeam)[]> => {
       const projects = await this.getUserProjects(userId);
 
       return Promise.all(
-        projects.map(async (p) => ({
-          ...p,
-          ...(await this.getProjectTeamMates(p.id)),
-        }))
+        projects.map(async (p) => {
+          if (!p.id) throw new Error(`Project is missing an ID: ${p}`);
+          return {
+            ...p,
+            ...(await this.getProjectTeamMates(p.id)),
+          };
+        })
       );
     },
     {
@@ -130,8 +133,8 @@ export class CinodeService {
     }
   );
 
-  async getUserImage(userId: number): Promise<Image | undefined> {
-    const images = (await this.api.getUserImages(userId)) as Image[];
+  async getUserImage(userId: number) {
+    const images = await this.api.getUserImages(userId);
     if (images.length) {
       return images.pop();
     }
@@ -140,7 +143,7 @@ export class CinodeService {
   getUserImageUrlCache = new ExpiryMap(24 * 60 * 1000); // User images doesn't change too often, cache one day
   getUserImageUrl = memoize(
     async (userId: number): Promise<string | undefined> => {
-      const images = (await this.api.getUserImages(userId)) as Image[];
+      const images = await this.api.getUserImages(userId);
       const lastImage = images.pop();
       if (lastImage) {
         return getImageUrl(lastImage);
@@ -151,50 +154,49 @@ export class CinodeService {
     }
   );
 
-  async listUsers(): Promise<User[]> {
-    return this.api.listUsers() as User[];
+  async listUsers() {
+    return this.api.listUsers();
   }
 
-  async getUsers(): Promise<(User & HasTeamInformation)[]> {
+  async getUsers() {
     const users = await this.listUsers();
-    return Promise.all(users.map((u) => this.getUser(u.companyUserId)));
+    return Promise.all(
+      users.flatMap((u) =>
+        u.companyUserId ? [this.getUser(u.companyUserId)] : []
+      )
+    );
   }
 
-  async getUser(id: number): Promise<User & HasTeamInformation> {
-    return (await this.api.getUser(id)) as User & HasTeamInformation;
+  async getUser(id: number) {
+    return await this.api.getUser(id);
   }
 
   async getActiveConsultants(): Promise<
-    (User & HasTeamInformation & HasAbsenceInformation)[]
+    (CompanyUser & HasTeamInformation & HasAbsenceInformation)[]
   > {
     return (await this.getActivePeople()).filter(
       (user) => !onlyInTeams(user, this.backofficeTeams)
     );
   }
 
-  async getActivePeople(): Promise<
-    (User & HasTeamInformation & HasAbsenceInformation)[]
-  > {
-    const users = await this.getUsers();
+  async getActivePeople(): Promise<(CompanyUser & HasAbsenceInformation)[]> {
+    const users = (await this.getUsers())
+      .filter(onlyActivePeople)
+      .filter(dropByEmail(this.ignoredEmails));
     return Promise.all(
-      users
-        .filter(onlyActivePeople)
-        .filter(dropByEmail(this.ignoredEmails))
-        .map(
-          async (
-            user: any
-          ): Promise<User & HasTeamInformation & HasAbsenceInformation> => ({
-            ...user,
-            absences: (await this.api.getUserAbsences(
-              user.companyUserId
-            )) as Absence[],
-          })
-        )
+      users.map(async (user) => {
+        if (!user.companyUserId)
+          throw new Error(`User is missing companyUserId: ${user}`);
+        return {
+          ...user,
+          absences: await this.api.getUserAbsences(user.companyUserId),
+        };
+      })
     );
   }
 
   async getAvailableConsultants(): Promise<
-    (User &
+    (CompanyUser &
       HasTeamInformation &
       HasAssignments &
       WithProfile &
@@ -204,9 +206,9 @@ export class CinodeService {
   }
 
   async getFilteredConsultants(
-    userFilter: UserFilter = (u: User & HasAssignments) => u.seoId === u.seoId
+    userFilter: UserFilter = (u) => u.seoId === u.seoId
   ): Promise<
-    (User &
+    (CompanyUser &
       HasTeamInformation &
       HasAssignments &
       WithProfile &
@@ -214,88 +216,100 @@ export class CinodeService {
   > {
     const users = await this.getActiveConsultants();
     const usersWithAssignments = await Promise.all(
-      users.map(async (user) => ({
-        ...user,
-        assignments: await this.api.getUserAssignments(user.companyUserId),
-      }))
+      users.map(async (user) => {
+        if (!user.companyUserId)
+          throw new Error(`User is missing companyUserId: ${user}`);
+        return {
+          ...user,
+          assignments: await this.api.getUserAssignments(user.companyUserId),
+        };
+      })
     );
 
     // Enrich the data with full user information
     return Promise.all(
-      usersWithAssignments.filter(userFilter).map(async (user) => ({
-        ...user,
-        profile: await this.getProfile(user.companyUserId),
-        absences: (await this.api.getUserAbsences(
-          user.companyUserId
-        )) as Absence[],
-      }))
+      usersWithAssignments.filter(userFilter).map(async (user) => {
+        if (!user.companyUserId)
+          throw new Error(`User is missing companyUserId: ${user}`);
+        return {
+          ...user,
+          profile: await this.getProfile(user.companyUserId),
+          absences: await this.api.getUserAbsences(user.companyUserId),
+        };
+      })
     );
   }
 
-  async getProjectTeamMates(projectId: number): Promise<ProjectTeam> {
-    const populateWithUserImageUrl = async (
-      u: User
-    ): Promise<User & HasImage> => ({
+  private async populateWithUserImageUrl(
+    u: CompanyUserBase
+  ): Promise<CompanyUserBase & HasImage> {
+    return {
       ...u,
-      imageUrl: await this.getUserImageUrl(u.companyUserId),
-    });
+      imageUrl: await this.getUserImageUrl(
+        u.companyUserId ?? Number.MIN_SAFE_INTEGER
+      ),
+    };
+  }
 
-    const assignments: Assignment[] = await this.api.getProjectAssignments(
-      projectId
-    );
-    const assigned: (User & HasImage)[] = await Promise.all(
+  async getProjectTeamMates(projectId: number): Promise<ProjectTeam> {
+    const assignments = await this.api.getProjectAssignments(projectId);
+    const assigned = await Promise.all(
       assignments
-        .map((a) => a.assigned)
-        .filter((a) => a)
-        .map(populateWithUserImageUrl)
+        .flatMap((a) => (a.assigned ? [a.assigned] : []))
+        .map(this.populateWithUserImageUrl)
     );
 
     const openRoles: number = assignments.filter(
-      (a) => !a.assigned && !a.prospects.length
+      (a) => !a.assigned && !a.prospects?.length
     ).length;
 
-    const prospects: (User & HasImage)[] = await Promise.all(
+    const prospects = await Promise.all(
       assignments
-        .map((a) => a.prospects)
-        .flat()
-        .map(populateWithUserImageUrl)
+        .flatMap((a) => a.prospects ?? [])
+        .map(this.populateWithUserImageUrl)
     );
 
     return { assigned, prospects, openRoles };
   }
 
-  async updateSkillByEmail(email: string, skill: string, level: string) {
-    const userId: number = await this.api.resolveUserIdByEmail(email);
+  async updateSkillByEmail(email: string, skillName: string, level: string) {
+    const userId = await this.api.resolveUserIdByEmail(email);
+    if (!userId) {
+      throw new Error(`No user found with email: ${email}`);
+    }
+
     const profile = await this.getProfile(userId);
 
     const existingSkill = profile
-      ? profile.skills.find(keywordMatch(skill))
+      ? profile.skills?.find(keywordMatch(skillName))
       : null;
 
-    if (existingSkill) {
+    if (existingSkill?.id) {
       return this.api.updateSkill(
         userId,
         existingSkill.id,
-        resolveSynonymId(existingSkill, skill),
+        resolveSynonymId(existingSkill, skillName),
         level
       );
     }
 
-    return this.api.updateProfileSkill(userId, skill, level);
+    return this.api.addSkill(userId, skillName, level);
   }
 
-  async removeSkillByEmail(
-    email: string,
-    skill: string
-  ): Promise<Skill | null> {
+  async removeSkillByEmail(email: string, skill: string) {
     const userId = await this.api.resolveUserIdByEmail(email);
+    if (!userId) {
+      console.warn(`No user found with email: ${email}`);
+      return Promise.resolve(null);
+    }
+
     const profile = await this.getProfile(userId);
 
     const existingSkill = profile
-      ? profile.skills.find(keywordMatch(skill))
+      ? profile.skills?.find(keywordMatch(skill))
       : null;
 
-    if (existingSkill) {
+    if (existingSkill?.id) {
       return this.api
         .deleteSkill(userId, existingSkill.id)
         .then(() => existingSkill);
@@ -303,11 +317,32 @@ export class CinodeService {
     return Promise.resolve(null);
   }
 
-  async getProfile(userId: number): Promise<Profile | undefined> {
+  async getProfile(userId: number) {
     return this.api.getProfile(userId).catch(ignoreError);
   }
 
+  async getProjectPipelines() {
+    return this.api.getProjectPipelines();
+  }
+
+  async getProjectPipeline(id: number) {
+    return (await this.api.getProjectPipelines()).find((p) => p.id === id);
+  }
+
+  async getProjectPipelineByTitle(title: string) {
+    return (await this.getProjectPipelines()).find((p) => p.title === title);
+  }
+
+  async getProjectPipelineStageByTitles(
+    pipelineTitle: string,
+    stageTitle: string
+  ) {
+    return (await this.getProjectPipelineByTitle(pipelineTitle))?.stages?.find(
+      (s) => s.title === stageTitle
+    );
+  }
+
   getCompany(): Company {
-    return this.api.company as Company;
+    return this.api.company;
   }
 }

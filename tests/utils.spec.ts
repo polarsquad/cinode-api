@@ -1,25 +1,19 @@
 import { expect } from 'chai';
 import 'mocha';
 import moment from 'moment';
-import {
-  HasAssignments,
-  WithProfile,
-  HasTeamInformation,
-  User,
-} from '../src/types';
-import { states } from '../src/model';
+import { ProjectState } from '../src/types';
 
 import {
-  hasActiveRole,
-  endingEmploymentInWeek,
-  onlyInTeams,
-  getOrderedSkills,
-  resolveSkillName,
-  getActiveAssignments,
-  notUpdatedSince,
-  employmentStarted,
-  isActiveProject,
   dropByEmail,
+  employmentStarted,
+  endingEmploymentInWeek,
+  getActiveAssignments,
+  getOrderedSkills,
+  hasActiveRole,
+  isActiveProject,
+  notUpdatedSince,
+  onlyInTeams,
+  resolveSkillName,
 } from '../src/utils';
 
 import { skill, user, project, assignment } from './test-builder';
@@ -30,47 +24,44 @@ describe('cinode utils', () => {
   context('hasActiveRole', () => {
     it('returns true if has project without start date', () => {
       expect(
-        hasActiveRole(
-          user({
-            assignments: {
-              assigned: [
-                {
-                  endDate: moment().add(1, 'week').toISOString(),
-                },
-              ],
-            },
-          }) as User & HasAssignments
-        )
+        hasActiveRole({
+          ...user(),
+          assignments: {
+            assigned: [
+              {
+                endDate: moment().add(1, 'week').toISOString(),
+              },
+            ],
+          },
+        })
       ).is.eql(true);
     });
     it('returns true if has project without end date', () => {
       expect(
-        hasActiveRole(
-          user({
-            assignments: {
-              assigned: [
-                {
-                  startDate: moment().subtract(1, 'week').toISOString(),
-                },
-              ],
-            },
-          }) as User & HasAssignments
-        )
+        hasActiveRole({
+          ...user(),
+          assignments: {
+            assigned: [
+              {
+                startDate: moment().subtract(1, 'week').toISOString(),
+              },
+            ],
+          },
+        })
       ).is.eql(true);
     });
     it('returns true if has project is about to start in less than two weeks', () => {
       expect(
-        hasActiveRole(
-          user({
-            assignments: {
-              assigned: [
-                {
-                  startDate: moment().add(13, 'days').toISOString(),
-                },
-              ],
-            },
-          }) as User & HasAssignments
-        )
+        hasActiveRole({
+          ...user(),
+          assignments: {
+            assigned: [
+              {
+                startDate: moment().add(13, 'days').toISOString(),
+              },
+            ],
+          },
+        })
       ).is.eql(true);
     });
   });
@@ -129,13 +120,14 @@ describe('cinode utils', () => {
     it('should return true if user only in the Backoffice team', () => {
       expect(
         onlyInTeams(
-          user({
+          {
+            ...user(),
             teamMembers: [
               {
                 team: { name: 'Backoffice' },
               },
             ],
-          }) as User & HasTeamInformation,
+          },
           ['Backoffice']
         )
       ).is.eql(true);
@@ -144,7 +136,8 @@ describe('cinode utils', () => {
     it('should return true if user in each of the teams', () => {
       expect(
         onlyInTeams(
-          user({
+          {
+            ...user(),
             teamMembers: [
               {
                 team: { name: 'Backoffice' },
@@ -153,7 +146,7 @@ describe('cinode utils', () => {
                 team: { name: 'Admin' },
               },
             ],
-          }) as User & HasTeamInformation,
+          },
           ['Backoffice', 'Admin']
         )
       ).is.eql(true);
@@ -162,13 +155,14 @@ describe('cinode utils', () => {
     it('should return true if user only in one of the teams', () => {
       expect(
         onlyInTeams(
-          user({
+          {
+            ...user(),
             teamMembers: [
               {
                 team: { name: 'Admin' },
               },
             ],
-          }) as User & HasTeamInformation,
+          },
           ['Backoffice', 'Admin']
         )
       ).is.eql(true);
@@ -177,9 +171,10 @@ describe('cinode utils', () => {
     it('should return true if not in any team', () => {
       expect(
         onlyInTeams(
-          user({
+          {
+            ...user(),
             teamMembers: [],
-          }) as User & HasTeamInformation,
+          },
           ['Backoffice']
         )
       ).is.eql(true);
@@ -188,13 +183,14 @@ describe('cinode utils', () => {
     it('should return false if in some other team', () => {
       expect(
         onlyInTeams(
-          user({
+          {
+            ...user(),
             teamMembers: [
               {
                 team: { name: 'Consultants / HKI' },
               },
             ],
-          }) as User & HasTeamInformation,
+          },
           ['Backoffice']
         )
       ).is.eql(false);
@@ -202,7 +198,8 @@ describe('cinode utils', () => {
     it('should return false if also in some other team', () => {
       expect(
         onlyInTeams(
-          user({
+          {
+            ...user(),
             teamMembers: [
               {
                 team: { name: 'Consultants / HKI' },
@@ -211,7 +208,7 @@ describe('cinode utils', () => {
                 team: { name: 'Backoffice' },
               },
             ],
-          }) as User & HasTeamInformation,
+          },
           ['Backoffice']
         )
       ).is.eql(false);
@@ -221,7 +218,10 @@ describe('cinode utils', () => {
   context('getOrderedSkills', () => {
     it('should return empty if no skills selected', () => {
       expect(
-        getOrderedSkills(user({ profile: {} }) as User & WithProfile)
+        getOrderedSkills({
+          ...user(),
+          profile: {},
+        })
       ).to.eql([]);
     });
 
@@ -233,13 +233,12 @@ describe('cinode utils', () => {
         })
       );
       expect(
-        getOrderedSkills(
-          user({
-            profile: {
-              skills: [skill({ level: 3, favourite: false }), ...starredSkills],
-            },
-          }) as User & WithProfile
-        )
+        getOrderedSkills({
+          ...user(),
+          profile: {
+            skills: [skill({ level: 3, favourite: false }), ...starredSkills],
+          },
+        })
       ).to.eql(starredSkills.reverse());
     });
 
@@ -256,13 +255,12 @@ describe('cinode utils', () => {
       );
 
       expect(
-        getOrderedSkills(
-          user({
-            profile: {
-              skills: [...lowSkills, ...highSkills],
-            },
-          }) as User & WithProfile
-        )
+        getOrderedSkills({
+          ...user(),
+          profile: {
+            skills: [...lowSkills, ...highSkills],
+          },
+        })
       ).to.eql([...highSkills, ...lowSkills]);
     });
 
@@ -278,13 +276,12 @@ describe('cinode utils', () => {
       });
 
       expect(
-        getOrderedSkills(
-          user({
-            profile: {
-              skills: [...highSkills, favouriteSkill],
-            },
-          }) as User & WithProfile
-        )
+        getOrderedSkills({
+          ...user(),
+          profile: {
+            skills: [...highSkills, favouriteSkill],
+          },
+        })
       ).to.include(favouriteSkill);
     });
 
@@ -313,13 +310,12 @@ describe('cinode utils', () => {
       });
 
       expect(
-        getOrderedSkills(
-          user({
-            profile: {
-              skills: [oldSkill, notUpdatedSkill, newSkill],
-            },
-          }) as User & WithProfile
-        )
+        getOrderedSkills({
+          ...user(),
+          profile: {
+            skills: [oldSkill, notUpdatedSkill, newSkill],
+          },
+        })
       ).to.eql([newSkill, oldSkill, notUpdatedSkill]);
     });
   });
@@ -364,17 +360,17 @@ describe('cinode utils', () => {
 
     it('should return also assignments that are coming up', () => {
       const active = assignment({
-        id: 'active',
+        id: 0,
         startDate: moment().subtract(1, 'week').toISOString(),
         endDate: moment().add(1, 'month').toISOString(),
       });
       const comingUp = assignment({
-        id: 'coming up',
+        id: 1,
         startDate: moment().add(1, 'month').toISOString(),
         endDate: moment().add(12, 'month').toISOString(),
       });
       const ended = assignment({
-        id: 'ended',
+        id: -1,
         startDate: moment().subtract(2, 'months').toISOString(),
         endDate: moment().subtract(1, 'week').toISOString(),
       });
@@ -408,7 +404,7 @@ describe('cinode utils', () => {
       expect(
         isActiveProject(
           project({
-            currentState: states.PROJECT_STATE_Won,
+            currentState: ProjectState.Won,
             assignments: [
               assignment({
                 startDate: moment().subtract(1, 'week').toISOString(),
@@ -424,7 +420,7 @@ describe('cinode utils', () => {
       expect(
         isActiveProject(
           project({
-            currentState: states.PROJECT_STATE_Won,
+            currentState: ProjectState.Won,
             assignments: [
               assignment({
                 startDate: moment().subtract(2, 'months').toISOString(),
@@ -440,7 +436,7 @@ describe('cinode utils', () => {
       expect(
         isActiveProject(
           project({
-            currentState: states.PROJECT_STATE_Open,
+            currentState: ProjectState.Open,
           })
         )
       ).to.eql(false);

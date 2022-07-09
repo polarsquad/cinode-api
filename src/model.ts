@@ -1,52 +1,27 @@
-const states = {
-  PROJECT_STATE_Open: 0,
-  PROJECT_STATE_Won: 30,
-  PROJECT_STATE_Lost: 40,
-  PROJECT_STATE_Abandoned: 50,
-  PROJECT_STATE_Suspended: 60,
-};
+import { ProjectPipelineStage, ProjectState } from './types';
 
-const projectStateToHumanReadable = (value) => {
+const projectStateToHumanReadable = (
+  value: ProjectState | undefined | null
+): keyof typeof ProjectState | null => {
   switch (value) {
-    case states.PROJECT_STATE_Open:
+    case ProjectState.Open:
       return 'Open';
-    case states.PROJECT_STATE_Won:
+    case ProjectState.Won:
       return 'Won';
-    case states.PROJECT_STATE_Lost:
+    case ProjectState.Lost:
       return 'Lost';
-    case states.PROJECT_STATE_Abandoned:
+    case ProjectState.Abandoned:
       return 'Abandoned';
-    case states.PROJECT_STATE_Suspended:
+    case ProjectState.Suspended:
       return 'Suspended';
     default:
-      return value;
+      return null;
   }
 };
 
-const stages = {
-  // NOTE: these are project pipeline specific and might change if someone change the pipeline
-  // Check the latest IDs from /v0.1/companies/{companyId}/projects/pipelines endpoint
-  PROJECT_PIPELINE_STAGE_Opportunity: 4082,
-  PROJECT_PIPELINE_STAGE_Prepare_Proposal: 4083,
-  PROJECT_PIPELINE_STAGE_Proposal_Sent: 4300,
-};
+const projectStageToHumanReadable = (
+  id: number,
+  stages: ProjectPipelineStage[]
+): string | null => stages.find((s) => s.id === id)?.title ?? null;
 
-const projectStageToHumanReadable = (value) => {
-  switch (value) {
-    case stages.PROJECT_PIPELINE_STAGE_Opportunity:
-      return 'Opportunity';
-    case stages.PROJECT_PIPELINE_STAGE_Prepare_Proposal:
-      return 'Prepare Proposal';
-    case stages.PROJECT_PIPELINE_STAGE_Proposal_Sent:
-      return 'Proposal Sent';
-    default:
-      return value;
-  }
-};
-
-export {
-  states,
-  projectStateToHumanReadable,
-  stages,
-  projectStageToHumanReadable,
-};
+export { projectStateToHumanReadable, projectStageToHumanReadable };

@@ -1,101 +1,124 @@
 import memoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
-import { Company } from './types';
+import {
+  AbsencePeriodDto,
+  CompanyBase,
+  CompanyCustomer,
+  CompanyCustomerBase,
+  CompanyImage,
+  CompanyUser,
+  CompanyUserBase,
+  CompanyUserProfileFull,
+  CompanyUserProfileSkill,
+  CompanyUserProjectAssignment,
+  CompanyUserSkill,
+  Project,
+  ProjectAssignment,
+  ProjectAssignmentEdit,
+  ProjectBase,
+  ProjectPipeline,
+  SearchResult,
+  SearchSkillResult,
+} from './types';
+import { Got } from 'got/dist/source';
 
 /**
  * @deprecated
- * In the past this was Cinode API wrapper.
- * We should not use this directly anymore because it's untyped, but rather use the Service.
+ * Prefer using the Service instead of this class directly
  */
 export class Api {
-  private readonly client;
-  private company: Company;
+  private readonly client: Got;
+  readonly company: CompanyBase;
 
-  constructor(company: Company, client) {
+  constructor(company: CompanyBase, client: Got) {
     this.company = company;
     this.client = client;
   }
 
   listUsers() {
-    return this.client.get(`v0.1/companies/${this.company.id}/users`).json();
+    return this.client
+      .get(`v0.1/companies/${this.company.id}/users`)
+      .json<CompanyUser[]>();
   }
 
   listAllCustomers() {
     return this.client
       .get(`v0.1/companies/${this.company.id}/customers`)
-      .json();
+      .json<CompanyCustomerBase[]>();
   }
 
-  getCustomer(id) {
+  getCustomer(id: number | string) {
     return this.client
       .get(`v0.1/companies/${this.company.id}/customers/${id}`)
-      .json();
+      .json<CompanyCustomer>();
   }
 
-  listAllProjects(query = {}) {
-    return this.client
+  async listAllProjects(query = {}) {
+    const {
+      pagedAndSortedBy: { itemsPerPage },
+      totalItems,
+    } = await this.client
       .post(`v0.1/companies/${this.company.id}/projects/search`, {
         json: query,
       })
-      .json()
-      .then(({ pagedAndSortedBy: { itemsPerPage }, totalItems }) =>
-        Promise.all(
-          [...Array(Math.ceil(totalItems / itemsPerPage)).keys()].map(
-            (pageIndex) =>
-              this.client
-                .post(`v0.1/companies/${this.company.id}/projects/search`, {
-                  json: { ...query, pageAndSortBy: { page: pageIndex + 1 } },
-                })
-                .json()
-          )
-        ).then((results) => results.map(({ result }) => result).flat())
-      );
+      .json<SearchResult<ProjectBase>>();
+
+    const results = await Promise.all(
+      [...Array(Math.ceil(totalItems / itemsPerPage)).keys()].map((pageIndex) =>
+        this.client
+          .post(`v0.1/companies/${this.company.id}/projects/search`, {
+            json: { ...query, pageAndSortBy: { page: pageIndex + 1 } },
+          })
+          .json<SearchResult<ProjectBase>>()
+      )
+    );
+
+    return results.map(({ result: result_2 }) => result_2 ?? []).flat();
   }
 
-  getProject(id) {
+  getProject(id: number | string) {
     return this.client
       .get(`v0.1/companies/${this.company.id}/projects/${id}`)
-      .json();
+      .json<Project>();
   }
 
-  updateProjectState(projectId, newState) {
+  updateProjectState(projectId: number | string, newState) {
     return this.updateProject(projectId, { projectState: newState });
   }
 
-  updateProject(projectId, changes) {
-    return this.getProject(projectId).then((project) =>
-      this.client
-        .put(`v0.1/companies/${this.company.id}/projects/${projectId}`, {
-          json: {
-            title: project.title,
-            customerId: project.customerId,
-            description: project.description,
-            identifier: project.identifier,
-            customerIdentifier: project.customerIdentifier,
-            intermediatorId: project.intermediator?.id ?? null,
-            estimatedCloseDate: project.estimatedCloseDate,
-            estimatedValue: project.estimatedValue,
-            probability: project.probability,
-            pipelineId: project.pipelineId,
-            pipelineStageId: project.currentStageId,
-            currencyId: project.currency?.id ?? null,
-            projectState: project.currentState,
-            teamId: project.teamId,
+  async updateProject(projectId: number | string, changes) {
+    const project = await this.getProject(projectId);
+    return await this.client
+      .put(`v0.1/companies/${this.company.id}/projects/${projectId}`, {
+        json: {
+          title: project.title,
+          customerId: project.customerId,
+          description: project.description,
+          identifier: project.identifier,
+          customerIdentifier: project.customerIdentifier,
+          intermediatorId: project.intermediator?.id ?? null,
+          estimatedCloseDate: project.estimatedCloseDate,
+          estimatedValue: project.estimatedValue,
+          probability: project.probability,
+          pipelineId: project.pipelineId,
+          pipelineStageId: project.currentStageId,
+          currencyId: project.currency?.id ?? null,
+          projectState: project.currentState,
+          teamId: project.teamId,
 
-            ...changes,
-          },
-        })
-        .json()
-    );
+          ...changes,
+        },
+      })
+      .json<Project>();
   }
 
-  getUser(userId) {
+  getUser(userId: number | string) {
     return this.client
       .get(`v0.1/companies/${this.company.id}/users/${userId}`)
-      .json();
+      .json<CompanyUser>();
   }
 
-  updateDesiredAssignment(userId, desiredAssignment) {
+  updateDesiredAssignment(userId: number | string, desiredAssignment: string) {
     return this.client
       .patch(`v0.1/companies/${this.company.id}/users/${userId}`, {
         json: [
@@ -106,100 +129,103 @@ export class Api {
           },
         ],
       })
-      .json();
+      .json<CompanyUser>();
   }
 
-  getUserAssignments(userId) {
+  getUserAssignments(userId: number | string) {
     return this.client
       .get(`v0.1/companies/${this.company.id}/users/${userId}/roles`)
-      .json();
+      .json<CompanyUserProjectAssignment>();
   }
 
-  getUserAbsences(userId) {
+  getUserAbsences(userId: number | string) {
     return this.client
       .get(`v0.1/companies/${this.company.id}/users/${userId}/absences`)
-      .json();
+      .json<AbsencePeriodDto[]>();
   }
 
-  getUserSkills(userId) {
+  getUserSkills(userId: number | string) {
     return this.client
       .get(`v0.1/companies/${this.company.id}/users/${userId}/skills`)
-      .json();
+      .json<CompanyUserSkill[]>();
   }
 
-  getUserProfileSkill(userId, skillId) {
+  getUserProfileSkill(userId: number | string, skillId: number | string) {
     return this.client
       .get(
         `v0.1/companies/${this.company.id}/users/${userId}/profile/skills/${skillId}`
       )
-      .json();
+      .json<CompanyUserProfileSkill>();
   }
 
-  getProjectAssignments(projectId) {
-    return this.getProject(projectId).then(({ assignments }) =>
-      Promise.all(
-        assignments.map(async ({ id }) =>
-          this.getProjectAssignment(projectId, id)
-        )
+  async getProjectAssignments(projectId: number | string) {
+    const { assignments } = await this.getProject(projectId);
+    return Promise.all(
+      (assignments || []).flatMap(({ id: id_1 }) =>
+        id_1 ? [this.getProjectAssignment(projectId, id_1)] : []
       )
     );
   }
 
-  getProjectAssignment(projectId, assignmentId) {
+  getProjectAssignment(
+    projectId: number | string,
+    assignmentId: number | string
+  ) {
     return this.client
       .get(
         `v0.1/companies/${this.company.id}/projects/${projectId}/roles/${assignmentId}`
       )
-      .json();
+      .json<ProjectAssignment>();
   }
 
-  updateProjectAssignment(projectId, assignmentId, updatedFields) {
-    return this.getProjectAssignment(projectId, assignmentId).then(
-      (assignment) =>
-        this.client
-          .put(
-            `v0.1/companies/${this.company.id}/projects/${projectId}/roles/${assignmentId}`,
-            {
-              json: {
-                // Only following fields are modifiable
-                projectAssignmentId: assignmentId,
-                title: assignment.title,
-                description: assignment.description,
-                startDate: assignment.startDate,
-                endDate: assignment.endDate,
-                rate: assignment.rate,
-                extent: assignment.extent,
-                oralAgreementToDate: assignment.oralAgreementToDate,
-                optionToDate: assignment.optionToDate,
-                contractType: assignment.contractType,
-                extentType: assignment.extentType,
-                currencyId: assignment.currency?.id ?? null,
+  async updateProjectAssignment(
+    projectId: number | string,
+    assignmentId: number | string,
+    updatedFields
+  ) {
+    const assignment = await this.getProjectAssignment(projectId, assignmentId);
+    return await this.client
+      .put(
+        `v0.1/companies/${this.company.id}/projects/${projectId}/roles/${assignmentId}`,
+        {
+          json: {
+            // Only following fields are modifiable
+            projectAssignmentId: assignmentId,
+            title: assignment.title,
+            description: assignment.description,
+            startDate: assignment.startDate,
+            endDate: assignment.endDate,
+            rate: assignment.rate,
+            extent: assignment.extent,
+            oralAgreementToDate: assignment.oralAgreementToDate,
+            optionToDate: assignment.optionToDate,
+            contractType: assignment.contractType,
+            extentType: assignment.extentType,
+            currencyId: assignment.currency?.id ?? null,
 
-                ...updatedFields,
-              },
-            }
-          )
-          .json()
-    );
+            ...updatedFields,
+          },
+        }
+      )
+      .json<ProjectAssignmentEdit>();
   }
 
-  cache = new ExpiryMap(7 * 24 * 60 * 1000); // Emails doesn't change too often, cache one week);
+  private readonly cache = new ExpiryMap(7 * 24 * 60 * 1000); // Emails doesn't change too often, cache one week);
   getUserEmail = memoize(
-    (userId) => this.getUser(userId).then((u) => u.companyUserEmail),
+    (userId: number | string): Promise<CompanyUser['companyUserEmail']> =>
+      this.getUser(userId).then((u) => u.companyUserEmail),
     {
       cache: this.cache,
     }
   );
 
   resolveUserIdByEmail = memoize(
-    (email) =>
+    (email: string): Promise<CompanyUserBase['companyUserId']> =>
       this.searchUsers(email).then((search) => {
-        if (!search.hits) {
-          return Promise.reject(new Error('Not found'));
+        if (!search.hits || !search.result) {
+          throw new Error('Not found');
         } else if (search.hits > 1) {
-          return Promise.reject(
-            new Error(`Found too many (hits ${search.hits})`)
-          );
+          throw new Error(`Found too many (hits ${search.hits})`);
         }
 
         return search.result[0].companyUserId;
@@ -209,14 +235,15 @@ export class Api {
     }
   );
 
-  whoHasSkills = (terms, min = 0, max = 5) =>
+  whoHasSkills = (terms: string[], min = 0, max = 5) =>
     Promise.all(terms.map((term) => this.whoHasSkill(term, min, max, 0))).then(
       (results) => {
-        const keywordIds = results
-          .map(({ query: { skills } }) =>
-            skills.map(({ keywordId }) => keywordId)
-          )
-          .flat();
+        const keywordIds = results.flatMap(
+          ({ query }) =>
+            query?.skills?.flatMap(({ keywordId }) =>
+              keywordId ? [keywordId] : []
+            ) ?? []
+        );
         return this.client
           .post(`v0.1/companies/${this.company.id}/skills/search`, {
             json: {
@@ -227,11 +254,11 @@ export class Api {
               })),
             },
           })
-          .json();
+          .json<SearchSkillResult>();
       }
     );
 
-  whoHasSkill = (skill, min = 0, max = 5, limit = 100) =>
+  whoHasSkill = (skill: string, min = 0, max = 5, limit = 100) =>
     this.client
       .post(`v0.1/companies/${this.company.id}/skills/search/term`, {
         json: {
@@ -241,35 +268,36 @@ export class Api {
           limit,
         },
       })
-      .json();
+      .json<SearchSkillResult>();
 
-  getUserImages = (userId) =>
+  getUserImages = (userId: number | string) =>
     this.client
       .get(`v0.1/companies/${this.company.id}/users/${userId}/images`)
-      .json();
+      .json<CompanyImage[]>();
 
-  async getUserByEmail(email) {
+  async getUserByEmail(email: string) {
     const userId = await this.resolveUserIdByEmail(email);
-    return this.client
-      .get(`v0.1/companies/${this.company.id}/users/${userId}`)
-      .json();
+    if (!userId) {
+      throw new Error('Not found');
+    }
+    return this.getUser(userId);
   }
 
-  searchUsers = (term) =>
+  searchUsers = (term: string) =>
     this.client
       .post(`v0.1/companies/${this.company.id}/users/search`, {
         json: {
           term: term,
         },
       })
-      .json();
+      .json<SearchResult<CompanyUserBase>>();
 
-  getProfile = (userId) =>
+  getProfile = (userId: number | string) =>
     this.client
       .get(`v0.1/companies/${this.company.id}/users/${userId}/profile`)
-      .json();
+      .json<CompanyUserProfileFull>();
 
-  addSkill = (userId, skill, level) =>
+  addSkill = (userId: number | string, skill: string, level: number | string) =>
     this.client
       .post(
         `v0.1/companies/${this.company.id}/users/${userId}/profile/skills`,
@@ -283,9 +311,14 @@ export class Api {
           },
         }
       )
-      .json();
+      .json<CompanyUserProfileSkill | undefined>();
 
-  updateSkill = (userId, skillId, keywordSynonymId, level) =>
+  updateSkill = (
+    userId: number | string,
+    skillId: number | string,
+    keywordSynonymId: number | string,
+    level: number | string
+  ) =>
     this.client
       .put(
         `v0.1/companies/${this.company.id}/users/${userId}/profile/skills/${skillId}`,
@@ -296,12 +329,23 @@ export class Api {
           },
         }
       )
-      .json();
+      .json<CompanyUserProfileSkill>();
 
-  deleteSkill = (userId, skillId) =>
+  deleteSkill = (userId: number | string, skillId: number | string) =>
     this.client
       .delete(
         `v0.1/companies/${this.company.id}/users/${userId}/profile/skills/${skillId}`
       )
-      .json();
+      .json<void>();
+
+  private readonly projectPipelineCache = new ExpiryMap(60 * 1000); // Cache pipelines for an hour
+  getProjectPipelines = memoize(
+    () =>
+      this.client
+        .get(`v0.1/companies/${this.company.id}/projects/pipelines`)
+        .json<ProjectPipeline[]>(),
+    {
+      cache: this.projectPipelineCache,
+    }
+  );
 }
