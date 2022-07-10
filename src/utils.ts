@@ -1,8 +1,8 @@
 import moment from 'moment';
 
 import {
-  projectStateToHumanReadable,
   projectStageToHumanReadable,
+  projectStateToHumanReadable,
 } from './model';
 import {
   AbsencePeriodDto,

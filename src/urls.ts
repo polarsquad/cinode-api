@@ -1,4 +1,5 @@
 import Urlify from 'urlify';
+
 import type {
   Company,
   CompanyCustomer,

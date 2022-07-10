@@ -1,18 +1,20 @@
-import memoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
+import memoize from 'p-memoize';
+
+import { Api } from './api';
 import type {
-  HasAbsenceInformation,
-  HasAssignments,
-  HasImage,
-  WithProfile,
-  HasTeamInformation,
   Company,
-  ProjectTeam,
-  UserFilter,
   CompanyUser,
   CompanyUserBase,
   CompanyUserProfileSkill,
+  HasAbsenceInformation,
+  HasAssignments,
+  HasImage,
+  HasTeamInformation,
   ProjectBase,
+  ProjectTeam,
+  UserFilter,
+  WithProfile,
 } from './types';
 import { getImageUrl } from './urls';
 import {
@@ -22,7 +24,6 @@ import {
   onlyActivePeople,
   onlyInTeams,
 } from './utils';
-import { Api } from './api';
 
 const ignoreError = () => undefined;
 

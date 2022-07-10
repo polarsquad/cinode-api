@@ -1,7 +1,7 @@
+import Bottleneck from 'bottleneck';
 import got, { Options } from 'got';
 import jwt_decode, { JwtPayload } from 'jwt-decode';
 import moment from 'moment';
-import Bottleneck from 'bottleneck';
 
 const CINODE_API_URL = 'https://api.cinode.app';
 

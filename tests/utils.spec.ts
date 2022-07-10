@@ -1,8 +1,9 @@
-import { expect } from 'chai';
 import 'mocha';
-import moment from 'moment';
-import { ProjectState } from '../src/types';
 
+import { expect } from 'chai';
+import moment from 'moment';
+
+import { ProjectState } from '../src/types';
 import {
   dropByEmail,
   employmentStarted,
@@ -15,9 +16,7 @@ import {
   onlyInTeams,
   resolveSkillName,
 } from '../src/utils';
-
-import { skill, user, project, assignment } from './test-builder';
-
+import { assignment, project, skill, user } from './test-builder';
 import { versionControlSkill } from './testdata';
 
 describe('cinode utils', () => {

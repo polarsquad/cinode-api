@@ -1,5 +1,7 @@
-import memoize from 'p-memoize';
 import ExpiryMap from 'expiry-map';
+import { Got } from 'got/dist/source';
+import memoize from 'p-memoize';
+
 import {
   AbsencePeriodDto,
   CompanyBase,
@@ -20,7 +22,6 @@ import {
   SearchResult,
   SearchSkillResult,
 } from './types';
-import { Got } from 'got/dist/source';
 
 /**
  * @deprecated
