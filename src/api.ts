@@ -24,7 +24,6 @@ import {
 } from './types';
 
 /**
- * @deprecated
  * Prefer using the Service instead of this class directly
  */
 export class Api {
@@ -81,10 +80,6 @@ export class Api {
     return this.client
       .get(`v0.1/companies/${this.company.id}/projects/${id}`)
       .json<Project>();
-  }
-
-  updateProjectState(projectId: number | string, newState) {
-    return this.updateProject(projectId, { projectState: newState });
   }
 
   async updateProject(projectId: number | string, changes) {
@@ -221,7 +216,7 @@ export class Api {
   );
 
   resolveUserIdByEmail = memoize(
-    (email: string): Promise<CompanyUserBase['companyUserId']> =>
+    (email: string): Promise<number> =>
       this.searchUsers(email).then((search) => {
         if (!search.hits || !search.result) {
           throw new Error('Not found');
@@ -229,14 +224,20 @@ export class Api {
           throw new Error(`Found too many (hits ${search.hits})`);
         }
 
-        return search.result[0].companyUserId;
+        const id = search.result[0].companyUserId;
+
+        if (id === null || id === undefined) {
+          throw new Error(`User is missing companyUserId: ${email}`);
+        }
+
+        return id;
       }),
     {
       cache: this.cache,
     }
   );
 
-  whoHasSkills = (terms: string[], min = 0, max = 5) =>
+  whoHasSkills = (terms: string[], min: number, max: number) =>
     Promise.all(terms.map((term) => this.whoHasSkill(term, min, max, 0))).then(
       (results) => {
         const keywordIds = results.flatMap(

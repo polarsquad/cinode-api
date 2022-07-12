@@ -11,6 +11,8 @@ import type {
   HasAssignments,
   HasImage,
   HasTeamInformation,
+  Project,
+  ProjectAssignment,
   ProjectBase,
   ProjectTeam,
   UserFilter,
@@ -49,9 +51,9 @@ const resolveSynonymId = (skill: CompanyUserProfileSkill, name: string) => {
 };
 
 export class CinodeService {
-  api: Api;
-  ignoredEmails: string[];
-  backofficeTeams: string[];
+  private readonly api: Api;
+  private readonly ignoredEmails: string[];
+  private readonly backofficeTeams: string[];
 
   constructor(
     api: any,
@@ -66,7 +68,7 @@ export class CinodeService {
   async getAllProjects() {
     const projects = await this.api.listAllProjects();
     return Promise.all(
-      projects.flatMap((p) => (p?.id ? [this.api.getProject(p.id)] : []))
+      projects.flatMap((p) => (p?.id ? [this.getProject(p.id)] : []))
     );
   }
 
@@ -93,11 +95,19 @@ export class CinodeService {
     );
   }
 
+  getCompany(): Company {
+    return this.api.company;
+  }
+
   async getCustomer(id: number) {
     return await this.api.getCustomer(id);
   }
 
-  async getUserEmail(userId: number | string) {
+  async getProject(id: number) {
+    return await this.api.getProject(id);
+  }
+
+  async getUserEmail(userId: number) {
     return await this.api.getUserEmail(userId);
   }
 
@@ -167,10 +177,6 @@ export class CinodeService {
     }
   );
 
-  async listUsers() {
-    return this.api.listUsers();
-  }
-
   async getUsers() {
     const users = await this.listUsers();
     return Promise.all(
@@ -202,7 +208,7 @@ export class CinodeService {
           throw new Error(`User is missing companyUserId: ${user}`);
         return {
           ...user,
-          absences: await this.api.getUserAbsences(user.companyUserId),
+          absences: await this.getUserAbsences(user.companyUserId),
         };
       })
     );
@@ -247,7 +253,7 @@ export class CinodeService {
         return {
           ...user,
           profile: await this.getProfile(user.companyUserId),
-          absences: await this.api.getUserAbsences(user.companyUserId),
+          absences: await this.getUserAbsences(user.companyUserId),
         };
       })
     );
@@ -264,8 +270,16 @@ export class CinodeService {
     };
   }
 
+  async getProjectAssignment(projectId: number, assignmentId: number) {
+    return await this.api.getProjectAssignment(projectId, assignmentId);
+  }
+
+  async getProjectAssignments(projectId: number) {
+    return await this.api.getProjectAssignments(projectId);
+  }
+
   async getProjectTeamMates(projectId: number): Promise<ProjectTeam> {
-    const assignments = await this.api.getProjectAssignments(projectId);
+    const assignments = await this.getProjectAssignments(projectId);
     const assigned = await Promise.all(
       assignments
         .flatMap((a) => (a.assigned ? [a.assigned] : []))
@@ -355,7 +369,46 @@ export class CinodeService {
     );
   }
 
-  getCompany(): Company {
-    return this.api.company;
+  async getUserAbsences(userId: number) {
+    return await this.api.getUserAbsences(userId);
+  }
+
+  async listUsers() {
+    return this.api.listUsers();
+  }
+
+  async resolveUserIdByEmail(email: string) {
+    return await this.api.resolveUserIdByEmail(email);
+  }
+
+  async searchUsers(term: string) {
+    return await this.api.searchUsers(term);
+  }
+
+  async setProjectAssignmentDates(
+    projectId: number,
+    assignmentId: number,
+    updatedFields: Pick<ProjectAssignment, 'startDate' | 'endDate'>
+  ) {
+    return await this.api.updateProjectAssignment(
+      projectId,
+      assignmentId,
+      updatedFields
+    );
+  }
+
+  async updateDesiredAssignment(userId: number, desiredAssignment: string) {
+    return await this.api.updateDesiredAssignment(userId, desiredAssignment);
+  }
+
+  async updateProjectState(
+    projectId: number,
+    newState: Pick<Project, 'currentState'>
+  ) {
+    return await this.api.updateProject(projectId, { projectState: newState });
+  }
+
+  async whoHasSkills(terms: string[], min = 0, max = 5) {
+    return await this.api.whoHasSkills(terms, min, max);
   }
 }
