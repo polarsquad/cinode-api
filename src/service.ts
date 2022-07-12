@@ -101,6 +101,10 @@ export class CinodeService {
     return await this.api.getUserEmail(userId);
   }
 
+  async getUserByEmail(email: string) {
+    return await this.api.getUserByEmail(email);
+  }
+
   async getUserAssignments(userId: number) {
     return await this.api.getUserAssignments(userId);
   }
