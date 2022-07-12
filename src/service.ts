@@ -283,7 +283,7 @@ export class CinodeService {
     const assigned = await Promise.all(
       assignments
         .flatMap((a) => (a.assigned ? [a.assigned] : []))
-        .map(this.populateWithUserImageUrl)
+        .map((member) => this.populateWithUserImageUrl(member))
     );
 
     const openRoles: number = assignments.filter(
@@ -292,8 +292,8 @@ export class CinodeService {
 
     const prospects = await Promise.all(
       assignments
-        .flatMap((a) => a.prospects ?? [])
-        .map(this.populateWithUserImageUrl)
+        .flatMap((assignment) => assignment.prospects ?? [])
+        .map((member) => this.populateWithUserImageUrl(member))
     );
 
     return { assigned, prospects, openRoles };
