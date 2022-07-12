@@ -403,7 +403,7 @@ export class CinodeService {
 
   async updateProjectState(
     projectId: number,
-    newState: Pick<Project, 'currentState'>
+    newState: Project['currentState']
   ) {
     return await this.api.updateProject(projectId, { projectState: newState });
   }
