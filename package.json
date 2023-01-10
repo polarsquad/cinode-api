@@ -1,6 +1,6 @@
 {
   "name": "@polarsquad/cinode-api",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "Cinode API for the Cinode platform",
   "homepage": "https://github.com/polarsquad/cinode-api#readme",
   "bugs": {
@@ -73,7 +73,7 @@
   "dependencies": {
     "bottleneck": "^2.19.5",
     "expiry-map": "^2.0.0",
-    "got": "^12.0.3",
+    "got": "^12.5.3",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
     "p-memoize": "^7.1.1",
@@ -81,20 +81,20 @@
     "urlify": "^0.3.6"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.0",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
-    "@typescript-eslint/parser": "^5.17.0",
+    "@typescript-eslint/parser": "^5.48.1",
     "chai": "^4.3.6",
     "eslint": "^8.12.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-config-recommended": "^4.1.0",
     "eslint-plugin-jsdoc": "^39.3.3",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-simple-import-sort": "^8.0.0",
-    "husky": "^8.0.1",
-    "mocha": "^10.0.0",
-    "prettier": "^2.6.2",
+    "husky": "^8.0.3",
+    "mocha": "^10.2.0",
+    "prettier": "^2.8.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
   },
