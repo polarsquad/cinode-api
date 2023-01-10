@@ -3,7 +3,7 @@ import 'mocha';
 import { expect } from 'chai';
 import moment from 'moment';
 
-import { ProjectState } from '../src/types';
+import { ProjectState } from '../src/types.js';
 import {
   dropByEmail,
   employmentStarted,
@@ -15,9 +15,9 @@ import {
   notUpdatedSince,
   onlyInTeams,
   resolveSkillName,
-} from '../src/utils';
-import { assignment, project, skill, user } from './test-builder';
-import { versionControlSkill } from './testdata';
+} from '../src/utils.js';
+import { assignment, project, skill, user } from './test-builder.js';
+import { versionControlSkill } from './testdata.js';
 
 describe('cinode utils', () => {
   context('hasActiveRole', () => {

@@ -18,7 +18,9 @@ const limiter = new Bottleneck({
 
 function isValidJwtToken(token: string): boolean {
   try {
-    return moment.unix(jwt_decode<JwtPayload>(token).exp || 0).isAfter();
+    return moment
+      .unix(jwt_decode.default<JwtPayload>(token).exp || 0)
+      .isAfter();
   } catch (e) {
     return false;
   }

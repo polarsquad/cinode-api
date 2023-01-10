@@ -1,7 +1,7 @@
 import ExpiryMap from 'expiry-map';
 import memoize from 'p-memoize';
 
-import { Api } from './api';
+import { Api } from './api.js';
 import type {
   Company,
   CompanyUser,
@@ -17,15 +17,15 @@ import type {
   ProjectTeam,
   UserFilter,
   WithProfile,
-} from './types';
-import { getImageUrl } from './urls';
+} from './types.js';
+import { getImageUrl } from './urls.js';
 import {
   dropByEmail,
   hasActiveRole,
   isActiveProject,
   onlyActivePeople,
   onlyInTeams,
-} from './utils';
+} from './utils.js';
 
 const ignoreError = () => undefined;
 

@@ -1,4 +1,4 @@
-import { CompanyUserProfileSkill } from '../src/types';
+import { CompanyUserProfileSkill } from '../src/types.js';
 
 export const versionControlSkill: CompanyUserProfileSkill = {
   profileId: 93750,

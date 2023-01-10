@@ -5,7 +5,7 @@ import {
   Project,
   ProjectAssignmentBase,
   ProjectState,
-} from '../src/types';
+} from '../src/types.js';
 
 export const company = (props?: Partial<Company>): Company => ({
   id: 0,

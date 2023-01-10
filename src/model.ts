@@ -1,4 +1,4 @@
-import { ProjectPipelineStage, ProjectState } from './types';
+import { ProjectPipelineStage, ProjectState } from './types.js';
 
 const projectStateToHumanReadable = (
   value: ProjectState | undefined | null

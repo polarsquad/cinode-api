@@ -2,14 +2,14 @@ import 'mocha';
 
 import { expect } from 'chai';
 
-import { HasProject, ProjectAssignmentBase } from '../src/types';
+import { HasProject, ProjectAssignmentBase } from '../src/types.js';
 import {
   buildProjectUrlFromAssignment,
   getImageUrl,
   isProjectUrl,
   parseProjectUrl,
-} from '../src/urls';
-import { assignment, company, project } from './test-builder';
+} from '../src/urls.js';
+import { assignment, company, project } from './test-builder.js';
 
 describe('cinode utils', () => {
   const TEST_COMPANY_NAME = 'foobarbaz';

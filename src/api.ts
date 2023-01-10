@@ -1,5 +1,5 @@
 import ExpiryMap from 'expiry-map';
-import { Got } from 'got/dist/source';
+import { Got } from 'got';
 import memoize from 'p-memoize';
 
 import {
@@ -21,7 +21,7 @@ import {
   ProjectPipeline,
   SearchResult,
   SearchSkillResult,
-} from './types';
+} from './types.js';
 
 /**
  * Prefer using the Service instead of this class directly
@@ -224,7 +224,7 @@ export class Api {
           throw new Error(`Found too many (hits ${search.hits})`);
         }
 
-        const id = search.result[0].companyUserId;
+        const id = search.result[0]?.companyUserId;
 
         if (id === null || id === undefined) {
           throw new Error(`User is missing companyUserId: ${email}`);

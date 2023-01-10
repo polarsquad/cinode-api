@@ -3,7 +3,7 @@ import moment from 'moment';
 import {
   projectStageToHumanReadable,
   projectStateToHumanReadable,
-} from './model';
+} from './model.js';
 import {
   AbsencePeriodDto,
   CompanyUser,
@@ -21,7 +21,7 @@ import {
   ProjectState,
   TimeSpan,
   WithProfile,
-} from './types';
+} from './types.js';
 
 const latestChangeFirst = (
   a: CompanyUserProfileSkillHistory,
@@ -40,7 +40,7 @@ export const findLatestChangeDate = (
     return null;
   }
 
-  return skill.changeHistory.sort(latestChangeFirst)[0].changeDateTime ?? null;
+  return skill.changeHistory.sort(latestChangeFirst)[0]?.changeDateTime ?? null;
 };
 
 const descendingBySkillLevel = (

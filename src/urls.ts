@@ -8,7 +8,7 @@ import type {
   HasProject,
   ProjectAssignmentBase,
   ProjectBase,
-} from './types';
+} from './types.js';
 
 // Warning: This was reverse engineered how they build the url
 // so there might be cases where this produces invalid url
@@ -36,7 +36,7 @@ export const isProjectUrl = (url: string): boolean =>
 
 export const parseProjectUrl = (url: string): number => {
   const match = PROJECT_URL_REGEX.exec(url);
-  if (match) {
+  if (match?.[1]) {
     return +match[1];
   }
   console.log(match, url);
