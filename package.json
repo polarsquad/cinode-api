@@ -13,44 +13,12 @@
     "Mikko Piuhola (mikko.piuhola@polarsquad.com)"
   ],
   "type": "module",
-  "main": "./dist/index",
-  "types": "./dist/index",
   "exports": {
-    "./types": "./dist/types",
-    "./api": "./dist/api",
-    "./client": "./dist/client",
-    "./config": "./dist/config",
-    "./model": "./dist/model",
-    "./service": "./dist/service",
-    "./urls": "./dist/urls",
-    "./utils": "./dist/utils"
-  },
-  "typesVersions": {
-    "*": {
-      "types": [
-        "dist/types.d.ts"
-      ],
-      "api": [
-        "dist/api.d.ts"
-      ],
-      "client": [
-        "./dist/client.d.ts"
-      ],
-      "config": [
-        "./dist/config.d.ts"
-      ],
-      "model": [
-        "./dist/model.d.ts"
-      ],
-      "service": [
-        "./dist/service.d.ts"
-      ],
-      "urls": [
-        "./dist/urls.d.ts"
-      ],
-      "utils": [
-        "./dist/utils.d.ts"
-      ]
+    "./*": {
+      "import": {
+        "types": "./dist/esm/*.d.ts",
+        "default": "./dist/esm/*.js"
+      }
     }
   },
   "files": [

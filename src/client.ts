@@ -1,6 +1,9 @@
 import Bottleneck from 'bottleneck';
 import got, { Options } from 'got';
-import jwt_decode, { JwtPayload } from 'jwt-decode';
+import _jwt_decode, { JwtPayload } from 'jwt-decode';
+// TODO: Drop workaround when upstream in jwt-decode, context: https://github.com/microsoft/TypeScript/issues/50690#issuecomment-1241464619
+const jwt_decode = _jwt_decode as unknown as typeof _jwt_decode.default;
+
 import moment from 'moment';
 
 const CINODE_API_URL = 'https://api.cinode.app';
@@ -18,9 +21,7 @@ const limiter = new Bottleneck({
 
 function isValidJwtToken(token: string): boolean {
   try {
-    return moment
-      .unix(jwt_decode.default<JwtPayload>(token).exp || 0)
-      .isAfter();
+    return moment.unix(jwt_decode<JwtPayload>(token).exp || 0).isAfter();
   } catch (e) {
     return false;
   }

@@ -158,9 +158,8 @@ export class CinodeService {
 
   async getUserImage(userId: number) {
     const images = await this.api.getUserImages(userId);
-    if (images.length) {
-      return images.pop();
-    }
+    if (images.length === 0) return;
+    return images.pop();
   }
 
   getUserImageUrlCache = new ExpiryMap(24 * 60 * 1000); // User images doesn't change too often, cache one day
@@ -168,9 +167,8 @@ export class CinodeService {
     async (userId: number): Promise<string | undefined> => {
       const images = await this.api.getUserImages(userId);
       const lastImage = images.pop();
-      if (lastImage) {
-        return getImageUrl(lastImage);
-      }
+      if (!lastImage) return;
+      return getImageUrl(lastImage);
     },
     {
       cache: this.getUserImageUrlCache,
