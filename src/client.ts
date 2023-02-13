@@ -1,5 +1,10 @@
 import Bottleneck from 'bottleneck';
-import got, { Options } from 'got';
+import got, {
+  BeforeErrorHook,
+  HandlerFunction,
+  Options,
+  RequestError,
+} from 'got';
 import _jwt_decode, { JwtPayload } from 'jwt-decode';
 // TODO: Drop workaround when upstream in jwt-decode, context: https://github.com/microsoft/TypeScript/issues/50690#issuecomment-1241464619
 const jwt_decode = _jwt_decode as unknown as typeof _jwt_decode.default;
@@ -27,10 +32,24 @@ function isValidJwtToken(token: string): boolean {
   }
 }
 
+const stackTraceHandler: HandlerFunction = (options, next) => {
+  const context: { stack?: string } = {};
+  Error.captureStackTrace(context, stackTraceHandler);
+  options.context = { ...options.context, stack: context.stack };
+  return next(options);
+};
+
+const addSourceStackTraceToError: BeforeErrorHook = (error: RequestError) => {
+  error.stack = `${error.stack}\n---Source Stack---\n${error.options.context['stack']}`;
+  return error;
+};
+
 export default (apiToken: string) =>
   got.extend({
     prefixUrl: CINODE_API_URL,
+    handlers: [stackTraceHandler],
     hooks: {
+      beforeError: [addSourceStackTraceToError],
       beforeRequest: [
         limiter.wrap(async (options: Options) => {
           if (!isValidJwtToken(apiToken)) {
