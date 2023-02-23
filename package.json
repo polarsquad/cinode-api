@@ -13,6 +13,13 @@
     "Mikko Piuhola (mikko.piuhola@polarsquad.com)"
   ],
   "type": "module",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/esm/*"
+      ]
+    }
+  },
   "exports": {
     "./*": {
       "import": {
@@ -34,7 +41,8 @@
     "validate": "tsc --noEmit",
     "full": "npm run validate && npm run lint && npm run prettier && npm run test",
     "prepare": "husky install",
-    "prepublish": "rimraf dist && tsc --project tsconfig.build.json"
+    "prepublish": "rimraf dist && npm run build",
+    "build": "tsc --project tsconfig.build.json"
   },
   "keywords": [],
   "license": "MIT",
