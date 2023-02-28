@@ -222,6 +222,16 @@ export class CinodeService {
     return await this.getFilteredConsultants((u) => !hasActiveRole(u));
   }
 
+  async getBookedConsultants(): Promise<
+    (CompanyUser &
+      HasTeamInformation &
+      HasAssignments &
+      WithProfile &
+      HasAbsenceInformation)[]
+  > {
+    return await this.getFilteredConsultants((u) => hasActiveRole(u));
+  }
+
   async getFilteredConsultants(
     userFilter: UserFilter = (u) => u.seoId === u.seoId
   ): Promise<
