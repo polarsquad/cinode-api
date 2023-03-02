@@ -420,7 +420,7 @@ export class CinodeService {
     return await this.api.whoHasSkills(terms, min, max);
   }
 
-  async getTeam(teamId: string) {
-    this.api.getTeam(teamId);
+  async getTeam(teamId: number) {
+    return this.api.getTeam(teamId);
   }
 }
