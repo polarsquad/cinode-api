@@ -1,6 +1,6 @@
 {
   "name": "@polarsquad/cinode-api",
-  "version": "0.11.4",
+  "version": "0.11.5",
   "description": "Cinode API for the Cinode platform",
   "homepage": "https://github.com/polarsquad/cinode-api#readme",
   "bugs": {

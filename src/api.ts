@@ -21,6 +21,7 @@ import {
   ProjectPipeline,
   SearchResult,
   SearchSkillResult,
+  TeamBase,
 } from './types.js';
 
 /**
@@ -350,4 +351,10 @@ export class Api {
       cache: this.projectPipelineCache,
     }
   );
+
+  getTeam(teamId: number | string) {
+    return this.client
+      .get(`v0.1/companies/${this.company.id}/teams/${teamId}`)
+      .json<TeamBase>();
+  }
 }

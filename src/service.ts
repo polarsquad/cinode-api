@@ -419,4 +419,8 @@ export class CinodeService {
   async whoHasSkills(terms: string[], min = 0, max = 5) {
     return await this.api.whoHasSkills(terms, min, max);
   }
+
+  async getTeam(teamId: string) {
+    this.api.getTeam(teamId);
+  }
 }
