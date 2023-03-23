@@ -60,4 +60,8 @@ export default (apiToken: string) =>
         }),
       ],
     },
+    retry: {
+      limit: 10,
+      maxRetryAfter: 600, // 10 min
+    },
   });
