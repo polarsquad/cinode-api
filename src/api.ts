@@ -29,11 +29,19 @@ import {
  */
 export class Api {
   private readonly client: Got;
+  private readonly retryablePostClient: Got; // For POST endpoints where retries are acceptable (e.g. search)
   readonly company: CompanyBase;
 
   constructor(company: CompanyBase, client: Got) {
     this.company = company;
     this.client = client;
+    this.retryablePostClient = client.extend({
+      retry: {
+        limit: 10,
+        methods: ['POST'],
+        maxRetryAfter: 600, // 10 min
+      },
+    });
   }
 
   listUsers() {
@@ -58,7 +66,7 @@ export class Api {
     const {
       pagedAndSortedBy: { itemsPerPage },
       totalItems,
-    } = await this.client
+    } = await this.retryablePostClient
       .post(`v0.1/companies/${this.company.id}/projects/search`, {
         json: query,
       })
@@ -66,7 +74,7 @@ export class Api {
 
     const results = await Promise.all(
       [...Array(Math.ceil(totalItems / itemsPerPage)).keys()].map((pageIndex) =>
-        this.client
+        this.retryablePostClient
           .post(`v0.1/companies/${this.company.id}/projects/search`, {
             json: { ...query, pageAndSortBy: { page: pageIndex + 1 } },
           })
@@ -247,7 +255,7 @@ export class Api {
               keywordId ? [keywordId] : []
             ) ?? []
         );
-        return this.client
+        return this.retryablePostClient
           .post(`v0.1/companies/${this.company.id}/skills/search`, {
             json: {
               skills: keywordIds.map((keywordId) => ({
@@ -262,7 +270,7 @@ export class Api {
     );
 
   whoHasSkill = (skill: string, min = 0, max = 5, limit = 100) =>
-    this.client
+    this.retryablePostClient
       .post(`v0.1/companies/${this.company.id}/skills/search/term`, {
         json: {
           term: skill,
@@ -287,7 +295,7 @@ export class Api {
   }
 
   searchUsers = (term: string) =>
-    this.client
+    this.retryablePostClient
       .post(`v0.1/companies/${this.company.id}/users/search`, {
         json: {
           term: term,
