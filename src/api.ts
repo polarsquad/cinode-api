@@ -37,9 +37,7 @@ export class Api {
     this.client = client;
     this.retryablePostClient = client.extend({
       retry: {
-        limit: 10,
         methods: ['POST'],
-        maxRetryAfter: 600, // 10 min
       },
     });
   }
