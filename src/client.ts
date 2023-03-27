@@ -66,6 +66,6 @@ export default (apiToken: string) =>
     },
     retry: {
       limit: 10,
-      maxRetryAfter: 600, // 10 min
+      maxRetryAfter: 10 * 60 * 1000, // 10 min (NOTE: it's actually in milliseconds, even if the docs reference Retry-After which is in seconds)
     },
   });
