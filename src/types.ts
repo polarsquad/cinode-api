@@ -1141,6 +1141,16 @@ export interface Project extends ProjectBase {
 
   updatedDateTime?: string | null;
 
+  stateHistory?: {
+    state: ProjectState;
+    updated: string;
+    reason: {
+      id: number;
+      title: string;
+      description: string;
+    };
+  }[];
+
   teamId?: number | null;
 
   stateReasonId?: number | null;
