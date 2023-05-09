@@ -49,11 +49,10 @@
   "dependencies": {
     "bottleneck": "^2.19.5",
     "expiry-map": "^2.0.0",
-    "got": "^12.5.3",
+    "got": "^12.6.0",
     "jwt-decode": "^3.1.2",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "p-memoize": "^7.1.1",
-    "rimraf": "^4.1.2",
     "urlify": "^0.3.6"
   },
   "devDependencies": {
@@ -72,6 +71,7 @@
     "husky": "^8.0.3",
     "mocha": "^10.2.0",
     "prettier": "^2.8.2",
+    "rimraf": "^5.0.0",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
   },
