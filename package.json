@@ -56,9 +56,9 @@
     "urlify": "^0.3.6"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.4",
+    "@types/chai": "^4.3.5",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^18.0.0",
+    "@types/node": "^18.14.4",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
     "@typescript-eslint/parser": "^5.48.1",
     "chai": "^4.3.6",
