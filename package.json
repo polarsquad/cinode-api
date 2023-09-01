@@ -7,6 +7,9 @@
     "url": "https://github.com/polarsquad/cinode-api/issues"
   },
   "author": "Tuomas Starck (tuomas.starck@polarsquad.com)",
+  "repository": {
+    "url": "https://github.com/polarsquad/cinode-api"
+  },
   "contributors": [
     "Erno Aapa (erno@polarsquad.com)",
     "Tamas Kadar (tamas.kadar@polarsquad.com)",
