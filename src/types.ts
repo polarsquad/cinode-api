@@ -5,31 +5,31 @@
 // https://api.cinode.app/docs/index.html
 
 // Get fetched with separate API call
-export type HasAbsenceInformation = {
+export interface HasAbsenceInformation {
   absences?: AbsencePeriodDto[];
-};
+}
 
 // Get fetched with separate API call
-export type HasAssignments = {
+export interface HasAssignments {
   assignments: CompanyUserProjectAssignment;
-};
+}
 
-export type HasImage = {
+export interface HasImage {
   imageUrl?: string;
-};
+}
 
-export type HasProject = {
+export interface HasProject {
   project: ProjectBase;
-};
+}
 
 // Get fetched with separate API call
 export type HasTeamInformation = Pick<CompanyUser, 'teamMembers'>;
 
-export type ProjectTeam = {
+export interface ProjectTeam {
   assigned: (CompanyUserExtendedBase & HasImage)[];
   prospects: (CompanyUserExtendedBase & HasImage)[];
   openRoles: number;
-};
+}
 
 export interface SearchResult<T> {
   pagedAndSortedBy: {
@@ -48,19 +48,19 @@ export interface SearchSkillResult {
   hits?: CompanyUserSearchSkill[] | null;
 }
 
-export type TimeSpan = {
+export interface TimeSpan {
   startDate?: string | null;
   endDate?: string | null;
-};
+}
 
 export type UserFilter = (
   u: CompanyUserExtendedBase & HasAssignments
 ) => boolean;
 
 // Get fetched with separate API call
-export type WithProfile = {
+export interface WithProfile {
   profile?: CompanyUserProfileFull;
-};
+}
 
 /*
  * Generated with: https://github.com/acacode/swagger-typescript-api

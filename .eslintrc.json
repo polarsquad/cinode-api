@@ -6,6 +6,7 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/stylistic",
     "prettier"
   ],
   "globals": {
@@ -16,14 +17,13 @@
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module",
-    "project": "tsconfig.json"
+    "project": true
   },
   "plugins": ["@typescript-eslint", "jsdoc", "prefer-arrow", "simple-import-sort"],
   "rules": {
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single", { "avoidEscape": true }],
     "no-unused-expressions": ["error"],
-    "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "simple-import-sort/imports": "error"
   }
