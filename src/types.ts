@@ -1006,6 +1006,54 @@ export interface ProjectAssignmentBase {
   links?: Link[] | null;
 }
 
+export interface ProjectAssignmentWithStatus {
+  pipelineId?: number;
+  projectPipelineStageTitle?: string;
+  customerId: number;
+  projectId: number;
+  projectState: ProjectState;
+
+  probability: number;
+  projectAssignmentId: number;
+
+  projectAssignmentAllocationStatus: AllocationStatus;
+
+  projectAssignmentMemberType: AssignmentMemberType;
+
+  startDate?: string;
+  endDate?: string;
+
+  optionToDate?: string;
+  oralAgreementToDate?: string;
+
+  projectAssignmentExtent: number;
+  projectAssignmentExtentType?: ExtentType;
+  rate?: number;
+  estimatedCloseDate?: string;
+
+  assigned?: ProjectAssignmentMember;
+}
+
+export enum AllocationStatus {
+  None = 0,
+  Preliminary = 1,
+  Assigned = 2,
+}
+
+export enum AssignmentStatus {
+  NoDatesSelected = 0,
+  Upcoming = 1,
+  Ongoing = 2,
+  Completed = 3,
+}
+
+export enum AssignmentMemberType {
+  Unspecified = 0,
+  Employee = 1,
+  PartnerConsultant = 2,
+  Subcontractor = 3,
+}
+
 export interface ProjectAssignment extends ProjectAssignmentBase {
   company?: CompanyBase | null;
   assigned?: ProjectAssignmentMember | null;

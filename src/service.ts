@@ -3,6 +3,9 @@ import memoize from 'p-memoize';
 
 import { Api } from './api.js';
 import type {
+  AllocationStatus,
+  AssignmentMemberType,
+  AssignmentStatus,
   Company,
   CompanyUser,
   CompanyUserBase,
@@ -14,6 +17,7 @@ import type {
   Project,
   ProjectAssignment,
   ProjectBase,
+  ProjectState,
   ProjectTeam,
   UserFilter,
   WithProfile,
@@ -113,6 +117,17 @@ export class CinodeService {
 
   async getUserByEmail(email: string) {
     return await this.api.getUserByEmail(email);
+  }
+
+  async listAssignments(options: {
+    pipelines?: number[];
+    projectAssignmentMemberTypes?: AssignmentMemberType[];
+    projectAssignmentStatuses?: AssignmentStatus[];
+    teams?: number[];
+    projectStates?: ProjectState[];
+    projectAssignmentAllocationStatuses?: AllocationStatus[];
+  }) {
+    return await this.api.listAssignments(options);
   }
 
   async getUserAssignments(userId: number) {
