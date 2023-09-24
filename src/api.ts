@@ -4,6 +4,9 @@ import memoize from 'p-memoize';
 
 import {
   AbsencePeriodDto,
+  AllocationStatus,
+  AssignmentMemberType,
+  AssignmentStatus,
   CompanyBase,
   CompanyCustomer,
   CompanyCustomerBase,
@@ -17,8 +20,10 @@ import {
   Project,
   ProjectAssignment,
   ProjectAssignmentEdit,
+  ProjectAssignmentWithStatus,
   ProjectBase,
   ProjectPipeline,
+  ProjectState,
   SearchResult,
   SearchSkillResult,
   TeamBase,
@@ -133,6 +138,21 @@ export class Api {
         ],
       })
       .json<CompanyUser>();
+  }
+
+  listAssignments(options: {
+    pipelines?: number[];
+    projectAssignmentMemberTypes?: AssignmentMemberType[];
+    projectAssignmentStatuses?: AssignmentStatus[];
+    teams?: number[];
+    projectStates?: ProjectState[];
+    projectAssignmentAllocationStatuses?: AllocationStatus[];
+  }) {
+    return this.client
+      .post(`v0.1/companies/${this.company.id}/roles`, {
+        json: options,
+      })
+      .json<ProjectAssignmentWithStatus[]>();
   }
 
   getUserAssignments(userId: number | string) {
