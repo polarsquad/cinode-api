@@ -20,6 +20,7 @@ import {
   Project,
   ProjectAssignment,
   ProjectAssignmentEdit,
+  ProjectAssignmentMemberSkill,
   ProjectAssignmentWithStatus,
   ProjectBase,
   ProjectPipeline,
@@ -382,5 +383,61 @@ export class Api {
     return this.client
       .get(`v0.1/companies/${this.company.id}/teams/${teamId}`)
       .json<TeamBase>();
+  }
+
+  addProjectAssignmentSkill(
+    projectId: number,
+    roleId: number,
+    skill: string,
+    level: number,
+    isMandatory = false
+  ) {
+    return this.client
+      .post(
+        `v0.1/companies/${this.company.id}/projects/${projectId}/roles/${roleId}/skills`,
+        {
+          headers: {
+            'Content-type': 'application/json-patch+json',
+          },
+          json: {
+            name: skill,
+            level,
+            isMandatory,
+          },
+        }
+      )
+      .json<ProjectAssignmentMemberSkill>();
+  }
+
+  updateProjectAssignmentSkill(
+    projectId: number,
+    roleId: number,
+    skillId: number,
+    level: number,
+    isMandatory = false
+  ) {
+    return this.client
+      .put(
+        `v0.1/companies/${this.company.id}/projects/${projectId}/roles/${roleId}/skills/${skillId}`,
+        {
+          json: {
+            level,
+            isMandatory,
+          },
+        }
+      )
+      .json<ProjectAssignmentMemberSkill>();
+  }
+
+  removeProjectAssignmentSkill(
+    projectId: number,
+    roleId: number,
+    skillId: number
+  ) {
+    return this.client
+      .delete(
+        `v0.1/companies/${this.company.id}/projects/${projectId}/roles/${roleId}/skills/${skillId}`
+      )
+      .json<void>();
   }
 }
