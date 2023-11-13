@@ -438,4 +438,48 @@ export class CinodeService {
   async getTeam(teamId: number) {
     return this.api.getTeam(teamId);
   }
+
+  async addProjectAssignmentSkill(
+    projectId: number,
+    roleId: number,
+    skill: string,
+    level: number,
+    isMandatory: boolean
+  ) {
+    return await this.api.addProjectAssignmentSkill(
+      projectId,
+      roleId,
+      skill,
+      level,
+      isMandatory
+    );
+  }
+
+  async updateProjectAssignmentSkill(
+    projectId: number,
+    roleId: number,
+    skillId: number,
+    level: number,
+    isMandatory: boolean
+  ) {
+    return await this.api.updateProjectAssignmentSkill(
+      projectId,
+      roleId,
+      skillId,
+      level,
+      isMandatory
+    );
+  }
+
+  async removeProjectAssignmentSkill(
+    projectId: number,
+    roleId: number,
+    skillId: number
+  ) {
+    return await this.api.removeProjectAssignmentSkill(
+      projectId,
+      roleId,
+      skillId
+    );
+  }
 }

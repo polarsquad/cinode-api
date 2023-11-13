@@ -1112,6 +1112,13 @@ export interface ProjectAssignmentMember extends CompanyUserBase {
   projectAssignmentMemberState?: ProjectAssignmentMemberState | null;
 }
 
+export interface ProjectAssignmentMemberSkill {
+  name?: string;
+  keywordSynonymId?: number | null;
+  level?: number;
+  isMandatory?: boolean;
+}
+
 export interface ProjectAssignmentSkillBase {
   companyId?: number;
 
