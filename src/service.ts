@@ -19,6 +19,7 @@ import type {
   ProjectBase,
   ProjectState,
   ProjectTeam,
+  SearchProjectQuery,
   UserFilter,
   WithProfile,
 } from './types.js';
@@ -69,8 +70,8 @@ export class CinodeService {
     this.backofficeTeams = backofficeTeams;
   }
 
-  async getAllProjects() {
-    const projects = await this.api.listAllProjects();
+  async getAllProjects(query: SearchProjectQuery = {}) {
+    const projects = await this.api.listAllProjects(query);
     return Promise.all(
       projects.flatMap((p) => (p?.id ? [this.getProject(p.id)] : []))
     );
