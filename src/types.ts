@@ -180,6 +180,21 @@ export enum ProjectState {
   Suspended = 60,
 }
 
+export enum SortByProject {
+  CreatedDateTime = 0,
+  Title = 1,
+  Identifier = 2,
+  CustomerIdentifier = 3,
+  SeoId = 4,
+  UpdatedDateTime = 5,
+  LastTouchDateTime = 6,
+}
+
+export enum SortOrder {
+  Ascending = 0,
+  Descending = 1,
+}
+
 export enum Status {
   Inactive = 0,
   Active = 1,
@@ -1265,6 +1280,27 @@ export interface Role {
   name?: string | null;
   description?: string | null;
   level?: AccessLevel | null;
+}
+
+interface PageAndSortByProject {
+  sortBy?: SortByProject;
+  sortOrder?: SortOrder;
+  page?: number;
+  itemsPerPage?: number;
+}
+
+export interface SearchProjectQuery {
+  title?: string;
+  identification?: string;
+  customerIdentifier?: string;
+  corporateIdentityNumber?: string;
+  customerId?: number;
+  pageAndSortBy?: PageAndSortByProject;
+  pipelines?: number[];
+  salesManagers?: number[];
+  customers?: number[];
+  intermediators?: number[];
+  projectStates?: ProjectState[];
 }
 
 export interface SearchSkill {

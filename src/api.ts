@@ -25,6 +25,7 @@ import {
   ProjectBase,
   ProjectPipeline,
   ProjectState,
+  SearchProjectQuery,
   SearchResult,
   SearchSkillResult,
   TeamBase,
@@ -66,7 +67,7 @@ export class Api {
       .json<CompanyCustomer>();
   }
 
-  async listAllProjects(query = {}) {
+  async listAllProjects(query: SearchProjectQuery = {}) {
     const {
       pagedAndSortedBy: { itemsPerPage },
       totalItems,
