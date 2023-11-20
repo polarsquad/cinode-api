@@ -483,4 +483,8 @@ export class CinodeService {
       skillId
     );
   }
+
+  async keywordSearch(term: string) {
+    return await this.api.keywordSearch(term);
+  }
 }
