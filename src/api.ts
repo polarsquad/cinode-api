@@ -17,6 +17,7 @@ import {
   CompanyUserProfileSkill,
   CompanyUserProjectAssignment,
   CompanyUserSkill,
+  Keyword,
   Project,
   ProjectAssignment,
   ProjectAssignmentEdit,
@@ -440,5 +441,11 @@ export class Api {
         `v0.1/companies/${this.company.id}/projects/${projectId}/roles/${roleId}/skills/${skillId}`
       )
       .json<void>();
+  }
+
+  keywordSearch(term: string) {
+    return this.client
+      .get(`v0.1/companies/${this.company.id}/keywords/search/${term}`)
+      .json<Keyword[]>();
   }
 }
