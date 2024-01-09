@@ -12,11 +12,11 @@ jobs:
       id-token: write
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
-      - name: Use Node.js v18
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Use Node.js version defined in .nvmrc
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm publish --provenance --access public
