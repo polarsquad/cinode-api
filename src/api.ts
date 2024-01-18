@@ -134,7 +134,7 @@ export class Api {
       .patch(`v0.1/companies/${this.company.id}/users/${userId}`, {
         json: [
           {
-            path: 'desiredAssignment',
+            path: '/desiredAssignment',
             op: 'replace',
             value: desiredAssignment,
           },
