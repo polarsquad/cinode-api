@@ -4,7 +4,8 @@
     /* Basic Options */
     "target": "es2022",
     "module": "node16",
-    "lib": ["ES2022"],
+    /* dom is only included due to got > form-data-encoder requiring it for ReadableStream; not happy about it */
+    "lib": ["ES2022", "dom"],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

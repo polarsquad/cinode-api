@@ -52,7 +52,7 @@
   "dependencies": {
     "bottleneck": "^2.19.5",
     "expiry-map": "^2.0.0",
-    "got": "^13.0.0",
+    "got": "^14.0.0",
     "jwt-decode": "^4.0.0",
     "moment": "^2.29.4",
     "p-memoize": "^7.1.1",
@@ -76,7 +76,7 @@
     "prettier": "^3.0.3",
     "rimraf": "^5.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.2.2"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18",
