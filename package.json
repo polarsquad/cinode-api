@@ -44,7 +44,7 @@
     "validate": "tsc --noEmit",
     "full": "npm run validate && npm run lint && npm run prettier && npm run test",
     "prepare": "husky install",
-    "prepublish": "rimraf dist && npm run build",
+    "prepublishOnly": "rimraf dist && npm run build",
     "build": "tsc --project tsconfig.build.json"
   },
   "keywords": [],
