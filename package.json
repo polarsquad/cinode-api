@@ -53,7 +53,7 @@
     "bottleneck": "^2.19.5",
     "expiry-map": "^2.0.0",
     "got": "^13.0.0",
-    "jwt-decode": "^3.1.2",
+    "jwt-decode": "^4.0.0",
     "moment": "^2.29.4",
     "p-memoize": "^7.1.1",
     "urlify": "^0.3.6"
