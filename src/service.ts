@@ -323,7 +323,7 @@ export class CinodeService {
     return { assigned, prospects, openRoles };
   }
 
-  async updateSkillByEmail(email: string, skillName: string, level: string) {
+  async updateSkillByEmail(email: string, skillName: string, level: number) {
     const userId = await this.api.resolveUserIdByEmail(email);
     if (!userId) {
       throw new Error(`No user found with email: ${email}`);

@@ -348,8 +348,8 @@ export class Api {
   updateSkill = (
     userId: number | string,
     skillId: number | string,
-    keywordSynonymId: number | string,
-    level: number | string
+    keywordSynonymId: number,
+    level: number
   ) =>
     this.client
       .put(
@@ -358,6 +358,7 @@ export class Api {
           json: {
             keywordSynonymId,
             level,
+            saveTo: 5, // CompanyUserProfileSkillEditModel > AllResumesOfLanguage = 3; Profile = 5;
           },
         }
       )
