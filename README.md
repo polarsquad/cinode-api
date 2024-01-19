@@ -20,6 +20,9 @@ This client has support for:
 1. Create a Cinode user and give it the roles "Api" and "Manager" in <https://app.cinode.com/polarsquad/administration/users/employees/>
     - The `yourcompany` part of the URL is your company name in the configuration
 1. Create a Cinode token for the bot user in <https://app.cinode.com/polarsquad/administration/integrations/tokens>
+    - Name & expiration: anything you like
+    - Mimic user: your bot user
+    - Token claims: Manager & Admin
 1. Import and configure the client:
 
     ```typescript
