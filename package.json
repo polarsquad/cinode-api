@@ -43,7 +43,7 @@
     "prettier-fix": "prettier --write './**/*.ts'",
     "validate": "tsc --noEmit",
     "full": "npm run validate && npm run lint && npm run prettier && npm run test",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prepublishOnly": "rimraf dist && npm run build",
     "build": "tsc --project tsconfig.build.json"
   },
@@ -71,7 +71,7 @@
     "eslint-plugin-jsdoc": "^48.0.2",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-simple-import-sort": "^10.0.0",
-    "husky": "^8.0.3",
+    "husky": "^9.0.7",
     "mocha": "^10.2.0",
     "prettier": "^3.2.4",
     "rimraf": "^5.0.5",
