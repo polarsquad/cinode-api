@@ -2,6 +2,7 @@ import Bottleneck from 'bottleneck';
 import got, {
   BeforeErrorHook,
   HandlerFunction,
+  HTTPError,
   Options,
   RequestError,
 } from 'got';
@@ -40,6 +41,27 @@ const stackTraceHandler: HandlerFunction = (options, next) => {
   return next(options);
 };
 
+/**
+ * Provide a slightly more useful error message with the:
+ * - response status
+ * - request method
+ * - request URL
+ */
+const formatErrorMessage: BeforeErrorHook = (error: RequestError) => {
+  if (error instanceof HTTPError) {
+    const { statusCode } = error.response;
+    const { method, url } = error.options;
+
+    error.message = `${statusCode} ${method} ${url}`;
+  }
+
+  return error;
+};
+
+/**
+ * Include the full async stack trace in error traces, instead of only what
+ * happened inside "got".
+ */
 const addSourceStackTraceToError: BeforeErrorHook = (error: RequestError) => {
   error.stack = `${error.stack}\n---Source Stack---\n${error.options.context['stack']}`;
   return error;
@@ -50,7 +72,7 @@ export default (apiToken: string) =>
     prefixUrl: CINODE_API_URL,
     handlers: [stackTraceHandler],
     hooks: {
-      beforeError: [addSourceStackTraceToError],
+      beforeError: [formatErrorMessage, addSourceStackTraceToError],
       beforeRequest: [
         limiter.wrap(async (options: Options) => {
           if (!isValidJwtToken(apiToken)) {
