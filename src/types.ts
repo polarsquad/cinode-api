@@ -873,6 +873,20 @@ export interface CompanyUserResumeBase {
 
   companyUserId?: number | null;
 
+  created?: {
+    companyUserId: number | null;
+    firstName: string | null;
+    lastName: string | null;
+    time: string | null;
+  } | null;
+
+  updated?: {
+    companyUserId: number | null;
+    firstName: string | null;
+    lastName: string | null;
+    time: string | null;
+  } | null;
+
   companyId?: number | null;
   title?: string | null;
   description?: string | null;
